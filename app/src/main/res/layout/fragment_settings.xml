@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_service_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/web_service_url"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/et_service_url"
+            android:inputType="textUri"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tv_protocol"
+        android:text="@string/security_protocol"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/til_service_url"
+        app:layout_constraintStart_toStartOf="@id/til_service_url"
+        app:layout_constraintTop_toBottomOf="@id/til_service_url"/>
+
+    <RadioGroup
+        android:id="@+id/rg_protocols"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/til_service_url"
+        app:layout_constraintStart_toStartOf="@id/til_service_url"
+        app:layout_constraintTop_toBottomOf="@id/tv_protocol">
+
+        <RadioButton
+            android:id="@+id/rb_tls_1_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tls_1" />
+
+        <RadioButton
+            android:id="@+id/rb_tls_1_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tls_1_1" />
+
+        <RadioButton
+            android:id="@+id/rb_tls_1_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tls_1_2" />
+
+        <RadioButton
+            android:id="@+id/rb_ssl_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ssl_3" />
+
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/cb_remember_auth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/remember_auth"
+        app:layout_constraintStart_toStartOf="@id/rg_protocols"
+        app:layout_constraintTop_toBottomOf="@id/rg_protocols"/>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btn_save"
+        app:layout_constraintTop_toBottomOf="@id/cb_remember_auth"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/green"
+        android:text="@string/save" />
+
+</android.support.constraint.ConstraintLayout>

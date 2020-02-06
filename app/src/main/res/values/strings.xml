@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Маркировка ТСД</string>
+    <string name="userData">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Вход</string>
+    <string name="settings">Настройки</string>
+    <string name="web_service_url">URL веб-сервиса:</string>
+    <string name="field_is_empty">Не оставляйте поле пустым</string>
+    <string name="url_setting_error">Укажите URL в формате: https://адрес/</string>
+    <string name="url_set">Установлен URL %s</string>
+    <string name="default_url">по умолчанию</string>
+    <string name="save">Сохранить</string>
+    <string name="coming">Приход</string>
+    <string name="consumption">Расход</string>
+    <string name="inventory">Товарные запасы</string>
+    <string name="logout">Выход</string>
+    <string name="search">Поиск</string>
+    <string name="ok">OK</string>
+    <string name="search_error">Накладная с данным номером отсутствует в системе!</string>
+    <string name="search_error2">Накладная с данным номером уже отсканирована</string>
+    <string name="search_error3">Ничего не найдено!</string>
+    <string name="ttn">ТТН</string>
+    <string name="positions">Позиции</string>
+    <string name="cipher">Шифр: %s</string>
+    <string name="scan_finish">Сканирование завершено. Сохранить?</string>
+    <string name="save_scan">Сохранить отсканированные позиции?</string>
+    <string name="delete_scan">Все отсканированные позиции будут удалены!</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="menu">Меню</string>
+    <string name="need_relogin">Токен устарел, нуобходимо выполнить повторный вход</string>
+    <string name="please_wait">Пожалуйста, подождите</string>
+    <string name="loading">Загрузка</string>
+    <string name="error">Ошибка</string>
+    <string name="scanned">Отсканировано: %s</string>
+    <string name="tls_1">TLS 1.0</string>
+    <string name="tls_1_1">TLS 1.1</string>
+    <string name="tls_1_2">TLS 1.2</string>
+    <string name="tls_1_3">TLS 1.3</string>
+    <string name="ssl_3">SSL 3</string>
+    <string name="security_protocol">Протокол безопасности:</string>
+    <string name="already_scanned">Эта упаковка уже была отсканирована</string>
+    <string name="wrong_package_specification">Неверная спецификация упаковки</string>
+    <string name="remember_auth">Сохранять логин и пароль</string>
+
+</resources>
