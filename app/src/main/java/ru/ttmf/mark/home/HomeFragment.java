@@ -1,4 +1,5 @@
 package ru.ttmf.mark.home;
+import android.widget.Button;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.coming.SearchFragment;
@@ -32,4 +33,5 @@ public class HomeFragment extends BaseFragment {
         PreferenceController.getInstance().clear();
         showFragment(new LoginFragment(), getString(R.string.enter), true, false);
     }
+
 }

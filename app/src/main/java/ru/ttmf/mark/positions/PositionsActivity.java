@@ -5,13 +5,19 @@ import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.BidiFormatter;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewDebug;
 import android.widget.TextView;
+
+import com.squareup.okhttp.internal.framed.Variant;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.ScanActivity;
@@ -36,7 +42,8 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
     private PositionsViewModel viewModel;
     private ProgressDialog progressDialog;
-
+    private Integer totalPositions = 0;
+    private Integer scannedPositions = 0;
     @BindView(R.id.positions)
     RecyclerView rvPositions;
 
@@ -46,7 +53,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     PositionsAdapter positionsAdapter;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
+    TextView totalPositionsTextView;
     private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
 
 
@@ -74,6 +81,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             }
         });
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
+        totalPositionsTextView = (TextView) findViewById(R.id.totalPositions);
     }
 
     @Override
@@ -106,8 +114,11 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 switch (response.getType()) {
                     case GetPositions:
                         hideProgressDialog();
-                        viewModel.setPositions((List<Position>) response.getObject());
-                        initPositionsRecycler((List<Position>) response.getObject());
+                        List<Position> positionsList = (List<Position>) response.getObject();
+                        viewModel.setPositions(positionsList);
+                        totalPositions = positionsList.size();
+                        totalPositionsTextView.setText("(" + 0 + "/" + totalPositions + ")");
+                        initPositionsRecycler(positionsList);
                         break;
                     case SavePositions:
                         hideProgressDialog();
@@ -130,12 +141,24 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private void successfulScan(String code) {
         DataMatrix matrix = new DataMatrix();
         DataMatrixHelpers.splitStr(matrix, code, 29);
-        positionsAdapter.removeItem(matrix.SGTIN());
+
+        for (int i = 0; i < positionsAdapter.getItems().size(); i++) {
+            if (positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SGTIN()) || positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SSCC())) {
+                scannedPositions++;
+                totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
+
+                if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
+                    positionsAdapter.removeItem(matrix.SSCC());
+                } else {
+                    positionsAdapter.removeItem(matrix.SGTIN());
+                }
+            }
+        }
+
         if (positionsAdapter.getItemCount() == 0) {
             showSaveDialog(getString(R.string.scan_finish));
         }
     }
-
 
     private List<String> getPositions(List<Position> positions) {
         List<String> res = new ArrayList<>();

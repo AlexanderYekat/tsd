@@ -36,6 +36,7 @@ public class InvoiceFragment extends BaseFragment implements
     public static final String ID = "ID";
     public static final String NAME = "NAME";
     public static final String CIPHER = "CIPHER";
+    public static final String COUNT = "COUNT";
 
     private static final String INVOICES = "invoices";
     private static final String CODE = "code";
@@ -91,12 +92,13 @@ public class InvoiceFragment extends BaseFragment implements
                 intent = new Intent(getContext(), PositionsActivity.class);
                 break;
             case PV:
-                intent = new Intent(getContext(), ConsumptionPositionsActivity.class);
+                 intent = new Intent(getContext(), ConsumptionPositionsActivity.class);
                 break;
         }
 
         intent.putExtra(CIPHER, invoice.getCipher());
         intent.putExtra(ID, invoice.getId());
+        intent.putExtra(COUNT, invoice.getCount());
         intent.putExtra(NAME, getArguments().getString(CODE));
         intent.putExtra(DATA_TYPE, searchViewModel.getDataType());
         startActivityForResult(intent, POSITIONS_SCANNED);

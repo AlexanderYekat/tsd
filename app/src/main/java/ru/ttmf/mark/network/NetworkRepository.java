@@ -13,6 +13,7 @@ import ru.ttmf.mark.network.model.BaseModel;
 import ru.ttmf.mark.network.model.BaseResponse;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.ConsumptionSearchData;
+import ru.ttmf.mark.network.model.Invoice;
 import ru.ttmf.mark.network.model.LoginModel;
 import ru.ttmf.mark.network.model.LoginResponse;
 import ru.ttmf.mark.network.model.PositionData;
@@ -169,7 +170,7 @@ public class NetworkRepository {
 
         switch (type) {
             case TTN:
-                action = "GET_TTN_SHIFRS";
+                action = "GET_TTN_SHIFRS2";
                 break;
             case PV:
                 action = "GET_PV_SHIFRS";
@@ -213,7 +214,7 @@ public class NetworkRepository {
 
         MutableLiveData<Response> liveData = new MutableLiveData<>();
         liveData.postValue(new Response(QueryType.GetPositions, NetworkStatus.LOADING));
-        apiService.getPositions(new BaseModel("GET_SHIFR_SGTINS", new PositionData(token, cipher)))
+        apiService.getPositions(new BaseModel("GET_SHIFR_SGTINS2", new PositionData(token, cipher)))
                 .enqueue(new Callback<PositionsResponse>() {
             @Override
             public void onResponse(Call<PositionsResponse> call, retrofit2.Response<PositionsResponse> response) {
@@ -258,7 +259,7 @@ public class NetworkRepository {
 
         switch (type) {
             case TTN:
-                action = "SET_SGTIN";
+                action = "SET_SGTIN2";
                 break;
             case PV:
                 action = "SET_PV_SGTINS";

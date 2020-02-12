@@ -41,7 +41,7 @@ public class PreferenceController {
     }
 
     public String getUrl() {
-        return sharedPreferences.getString(URL, "https://etpttmf.ru/mark/api/mark/");
+        return sharedPreferences.getString(URL, "https://med.ttmf.ru/mark/api/mark/");
     }
 
     public String getSecureProtocol() {
@@ -73,7 +73,7 @@ public class PreferenceController {
     }
 
     public boolean isRememberAuth() {
-        return sharedPreferences.getBoolean(REMEMBER_AUTH, false);
+        return sharedPreferences.getBoolean(REMEMBER_AUTH, true);
     }
 
     public void setLogin(String login) {

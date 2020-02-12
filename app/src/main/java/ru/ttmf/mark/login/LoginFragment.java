@@ -8,6 +8,8 @@ import android.support.design.widget.TextInputEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.home.HomeFragment;
@@ -61,6 +63,7 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
                 .observe(this, this::onChanged);
     }
 
+
     @OnClick(R.id.btn_settings)
     public void onSettingsButtonClick() {
         hideKeyboard();
@@ -108,7 +111,7 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
             case SUCCESS:
                 hideProgressDialog();
                 hideKeyboard();
-                UserData userData = ((UserData)response.getObject());
+                UserData userData = ((UserData) response.getObject());
                 PreferenceController.getInstance().setToken(userData.getToken());
                 PreferenceController.getInstance().setUserId(userData.getUserInfo().getId());
                 PreferenceController.getInstance().setUserName(userData.getUserInfo().getFio());

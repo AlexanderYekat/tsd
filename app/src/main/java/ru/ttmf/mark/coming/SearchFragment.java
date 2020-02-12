@@ -75,7 +75,6 @@ public class SearchFragment extends BaseFragment implements Observer<Response> {
     }
 
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -94,11 +93,9 @@ public class SearchFragment extends BaseFragment implements Observer<Response> {
         search();
     }
 
-
-    private void search() {
+    public void search() {
         hideKeyboard();
-        searchViewModel
-                .searchInvoice(
+        searchViewModel.searchInvoice(
                         PreferenceController.getInstance().getToken(),
                         PreferenceController.getInstance().getUserId(),
                         code.getText().toString())
@@ -125,6 +122,7 @@ public class SearchFragment extends BaseFragment implements Observer<Response> {
                 } else {
                     ArrayList<Invoice> invoices = new ArrayList<>();
                     invoices.addAll((List<Invoice>) response.getObject());
+
                     showFragment(InvoiceFragment.newInstance(
                             searchViewModel.getDataType(),
                             invoices,

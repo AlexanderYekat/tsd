@@ -1,6 +1,8 @@
 package ru.ttmf.mark.common;
 
 
+import android.support.annotation.Nullable;
+
 public class DataMatrix {
 
     private String SN; //As String 'Серийный номер *\ до 20 символов
@@ -76,5 +78,9 @@ public class DataMatrix {
 
     public final String SGTIN() {
         return (this.GTIN + this.SN);
+    }
+
+    public final String SSCC() {
+        return (this.SSCC);
     }
 }

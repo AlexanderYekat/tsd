@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 public class Position implements Serializable {
-    @SerializedName("sgtin")
+    @SerializedName("sgtin_sscc")
     @Expose
     private String sgTin;
 
