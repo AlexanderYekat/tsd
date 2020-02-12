@@ -1,0 +1,3 @@
+D:\Android\Projects\tsd\app\release
+
+перед релизом увеличить версию приложения

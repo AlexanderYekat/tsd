@@ -1,0 +1,2 @@
+
+keytool -genkey -v -keystore tatmed.keystore -alias tatmed -keyalg RSA -keysize 2048 -validity 10000
