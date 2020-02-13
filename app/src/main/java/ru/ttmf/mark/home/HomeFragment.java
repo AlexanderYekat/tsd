@@ -1,5 +1,9 @@
 package ru.ttmf.mark.home;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Arrays;
+import java.util.List;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.coming.SearchFragment;
@@ -11,6 +15,10 @@ import ru.ttmf.mark.preference.PreferenceController;
 import butterknife.OnClick;
 
 public class HomeFragment extends BaseFragment {
+
+    private List<String> ttmf_mark_id_list =  PreferenceController.getInstance().getTTMFmarkId();
+    private String mark_id = PreferenceController.getInstance().getMarkId();
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_home;
@@ -32,6 +40,24 @@ public class HomeFragment extends BaseFragment {
     public void onLogoutClick() {
         PreferenceController.getInstance().clear();
         showFragment(new LoginFragment(), getString(R.string.enter), true, false);
+    }
+
+    @OnClick(R.id.inventory)
+    public void onInventoryClick() {
+        Toast.makeText(getContext(), R.string.inventory_in_dev, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @OnClick(R.id.unpack)
+    public void onUnpackClick() {
+        if (ttmf_mark_id_list.contains(mark_id))
+        {
+            Toast.makeText(getContext(), R.string.unpack_in_dev_ttmf, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getContext(), R.string.unpack_in_dev, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

@@ -5,7 +5,10 @@
     <string name="enter">Вход</string>
     <string name="settings">Настройки</string>
     <string name="web_service_url">URL веб-сервиса:</string>
+    <string name="mark_id">Идентификатор МД</string>
     <string name="field_is_empty">Не оставляйте поле пустым</string>
+    <string name="mark_id_is_empty">Не оставляйте mark_id пустым</string>
+    <string name="mark_id_error">mark_id состоит из 10 цифр</string>
     <string name="url_setting_error">Укажите URL в формате: https://адрес/</string>
     <string name="url_set">Установлен URL %s</string>
     <string name="default_url">по умолчанию</string>
@@ -13,12 +16,16 @@
     <string name="coming">Приход</string>
     <string name="consumption">Расход</string>
     <string name="inventory">Товарные запасы</string>
+    <string name="unpack">Расформирование SSCC</string>
     <string name="logout">Выход</string>
     <string name="search">Поиск</string>
     <string name="ok">OK</string>
     <string name="search_error">Накладная с данным номером отсутствует в системе!</string>
     <string name="search_error2">Накладная с данным номером уже отсканирована</string>
     <string name="search_error3">Ничего не найдено!</string>
+    <string name="inventory_in_dev">Функционал товарных запасов в разработке</string>
+    <string name="unpack_in_dev">Функционал по расформированию SSCC в разработке</string>
+    <string name="unpack_in_dev_ttmf">ТТМФ Функционал по расформированию SSCC в разработке</string>
     <string name="ttn">ТТН</string>
     <string name="positions">Позиции</string>
     <string name="cipher">Шифр: %s</string>

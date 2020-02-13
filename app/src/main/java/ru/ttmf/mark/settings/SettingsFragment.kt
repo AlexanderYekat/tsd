@@ -15,6 +15,7 @@ class SettingsFragment : BaseFragment() {
     override fun getLayoutId() = R.layout.fragment_settings
 
     private var url = PreferenceController.getInstance().url
+    private var mark_id = PreferenceController.getInstance().markId
     private var protocol = PreferenceController.getInstance().secureProtocol
     private var isRememberAuth = PreferenceController.getInstance().isRememberAuth
 
@@ -22,6 +23,7 @@ class SettingsFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         et_service_url.setText(url)
+        et_mark_id.setText(mark_id)
         cb_remember_auth.isChecked = isRememberAuth
 
         when (protocol) {
@@ -43,33 +45,55 @@ class SettingsFragment : BaseFragment() {
         btn_save.setOnClickListener {
 
             var url = et_service_url.text.toString()
+            var temp_mark_id = et_mark_id.text.toString()
 
             if (url.isNotEmpty()) {
+                if (temp_mark_id.isNotEmpty()) {
 
-                if (!URLUtil.isValidUrl(url) || url[url.length - 1] != '/') {
-                    til_service_url.error = getString(R.string.url_setting_error)
-                    return@setOnClickListener
-                }
-
-                val isRememberAuth = cb_remember_auth.isChecked
-
-                PreferenceController.getInstance().apply {
-                    this.url = url
-                    this.secureProtocol = protocol
-                    this.isRememberAuth = isRememberAuth
-
-                    if (!isRememberAuth) {
-                        login = ""
-                        password = ""
+                    if (!URLUtil.isValidUrl(url) || url[url.length - 1] != '/') {
+                        til_service_url.error = getString(R.string.url_setting_error)
+                        return@setOnClickListener
                     }
-                }
 
-                hideKeyboard()
-                NetworkRepository.refresh()
-                activity?.onBackPressed()
+                    if (!(temp_mark_id.length.equals(14) && isNumeric(temp_mark_id))) {
+                        til_mark_id.error = getString(R.string.mark_id_error)
+                        return@setOnClickListener
+                    }
 
+                    val isRememberAuth = cb_remember_auth.isChecked
+
+                    PreferenceController.getInstance().apply {
+                        this.url = url
+                        this.secureProtocol = protocol
+                        this.isRememberAuth = isRememberAuth
+                        this.markId = temp_mark_id
+
+                        if (!isRememberAuth) {
+                            login = ""
+                            password = ""
+                        }
+                    }
+
+                    hideKeyboard()
+                    NetworkRepository.refresh()
+                    activity?.onBackPressed()
+
+                } else
+                    til_mark_id.error = getString(R.string.mark_id_is_empty)
             } else
                 til_service_url.error = getString(R.string.field_is_empty)
         }
+    }
+
+    fun isNumeric(strNum: String): Boolean {
+        try {
+            val d = java.lang.Long.parseLong(strNum)
+        } catch (nfe: NumberFormatException) {
+            return false
+        } catch (nfe: NullPointerException) {
+            return false
+        }
+
+        return true
     }
 }
