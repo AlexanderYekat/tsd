@@ -4,8 +4,9 @@
     <string name="password">Пароль</string>
     <string name="enter">Вход</string>
     <string name="settings">Настройки</string>
-    <string name="web_service_url">URL веб-сервиса:</string>
+    <string name="scan_sscc">отсканируйте SSCC</string>
     <string name="mark_id">Идентификатор МД</string>
+    <string name="mark_id_text_view">Идентификатор МД:</string>
     <string name="field_is_empty">Не оставляйте поле пустым</string>
     <string name="mark_id_is_empty">Не оставляйте mark_id пустым</string>
     <string name="mark_id_error">mark_id состоит из 10 цифр</string>
@@ -13,10 +14,14 @@
     <string name="url_set">Установлен URL %s</string>
     <string name="default_url">по умолчанию</string>
     <string name="save">Сохранить</string>
+    <string name="web_service_url">URL веб-сервиса:</string>
     <string name="coming">Приход</string>
+    <string name="result_tv_text">Результат:</string>
+    <string name="result_text">Результат запроса</string>
     <string name="consumption">Расход</string>
     <string name="inventory">Товарные запасы</string>
     <string name="unpack">Расформирование SSCC</string>
+    <string name="unpack_btn_text">Расформировать SSCC</string>
     <string name="logout">Выход</string>
     <string name="search">Поиск</string>
     <string name="ok">OK</string>

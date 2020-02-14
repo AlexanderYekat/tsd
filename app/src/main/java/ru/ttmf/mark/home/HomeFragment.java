@@ -10,6 +10,7 @@ import ru.ttmf.mark.coming.SearchFragment;
 import ru.ttmf.mark.common.BaseFragment;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.login.LoginFragment;
+import ru.ttmf.mark.unpack.UnpackFragment;
 import ru.ttmf.mark.preference.PreferenceController;
 
 import butterknife.OnClick;
@@ -47,12 +48,12 @@ public class HomeFragment extends BaseFragment {
         Toast.makeText(getContext(), R.string.inventory_in_dev, Toast.LENGTH_SHORT).show();
     }
 
-
     @OnClick(R.id.unpack)
     public void onUnpackClick() {
         if (ttmf_mark_id_list.contains(mark_id))
         {
-            Toast.makeText(getContext(), R.string.unpack_in_dev_ttmf, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), R.string.unpack_in_dev_ttmf, Toast.LENGTH_SHORT).show();
+            showFragment(new UnpackFragment(), getString(R.string.unpack), true, false);
         }
         else
         {
