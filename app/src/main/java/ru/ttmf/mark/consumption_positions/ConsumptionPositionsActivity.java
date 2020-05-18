@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,24 +25,29 @@ import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.Position;
-import ru.ttmf.mark.positions.PositionsAdapter;
+import ru.ttmf.mark.positions.ReverseSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static ru.ttmf.mark.Helpers.Helpers.isNumeric;
 import static ru.ttmf.mark.invoice.InvoiceFragment.*;
 
 public class ConsumptionPositionsActivity extends ScanActivity implements Observer<Response> {
     public static final String CODE = "CODE";
     private ConsumptionPositionsViewModel viewModel;
     private ProgressDialog progressDialog;
-    private List<String> scannedConsumptionPositions;
-    private Integer totalCount = 0;
-    private Integer scannedCount = 0;
+    private String Ean;
+    private List<ReverseSaveModel> scanPositions;
+    private Integer totalCount;
+    private Integer scannedCount;
+    private Integer startCount;
 
     @BindView(R.id.positions)
     RecyclerView rvPositions;
@@ -65,7 +71,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         initToolbar(toolbar, getString(R.string.positions));
         viewModel = ViewModelProviders.of(this)
                 .get(ConsumptionPositionsViewModel.class);
-
+        Ean = getIntent().getExtras().getString(EAN13);
         String cipherText = getIntent().getExtras().getString(CIPHER);
         String id = getIntent().getExtras().getString(ID);
         totalCount = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
@@ -74,7 +80,6 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
         viewModel.searchPositions(PreferenceController.getInstance().getToken(), id).observe(this, this);
         scanned.setText(getString(R.string.cipher, cipherText));
-
         IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
         intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
             @Override
@@ -83,7 +88,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             }
         });
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
-        totalConsumptionPositionsTextView = (TextView)findViewById(R.id.consumptionPositions);
+        totalConsumptionPositionsTextView = (TextView) findViewById(R.id.consumptionPositions);
+        scanPositions = new ArrayList<>();
     }
 
     @Override
@@ -119,17 +125,15 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                         ConsumptionResponse.Data data = (ConsumptionResponse.Data) response.getObject();
                         viewModel.setValidPositions(data.getValidPositions());
                         viewModel.setScannedPositions(data.getPositions());
-                        scannedConsumptionPositions = data.getPositions();
                         scannedCount = data.getPositions().size();
-                        totalConsumptionPositionsTextView.setText("(" + scannedConsumptionPositions.size() + "/" + totalCount + ")");
-                        //initPositionsRecycler(viewModel.getScannedPositions().getValue());
+                        startCount = scannedCount;
+                        totalConsumptionPositionsTextView.setText("(" + scannedCount + "/" + totalCount + ")");
                         initPositionsRecycler(data.getPositions());
                         break;
                     case SavePositions:
                         hideProgressDialog();
                         finish();
                         break;
-
                 }
 
                 break;
@@ -149,31 +153,114 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     private void successfulScan(String code) {
 
         DataMatrix matrix = new DataMatrix();
-        DataMatrixHelpers.splitStr(matrix, code, 29);
-        String decoded = matrix.SGTIN();
+        try {
+            DataMatrixHelpers.splitStr(matrix, code, 29);
 
-        List<String> positions = viewModel.getValidPositions();
-        /*for (int i =0; i < positions.size(); i++){
-            if (positions.get(i).equals(matrix.SGTIN())){
-                totalConsumptionPositionsTextView.setText("(" + scannedConsumptionPositions.size() + "/" + totalConsumptionPositions + ")");
+            //////////////BASE 64 QRCODE//////////////////////
+            //byte[] codeBytes = code.getBytes(Charset.forName("UTF-8"));
+            //byte[] code64 = android.util.Base64.encode(codeBytes, Base64.DEFAULT);
+            //String code64String = new String(code64);
+
+            Scan(positionsAdapter.getItems(), matrix, code);
+        } catch (Exception ex) {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Неверный штрихкод!", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+    }
+
+    private void Scan(List<String> posList, DataMatrix matrix, String code) {
+        if (scannedCount != totalCount) {
+            if (posList.size() > 0) {
+                if (checkPosition(posList, matrix)) {
+                    if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
+                        positionsAdapter.addItem(matrix.SSCC());
+                        viewModel.addPositions(matrix.SSCC());
+                        scannedCount++;
+                        scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                    } else {
+                        //нет проверки на еан в методе нет еан кода
+                        //checkEanSgtin(matrix);
+                        positionsAdapter.addItem(matrix.SGTIN());
+                        viewModel.addPositions(matrix.SGTIN());
+                        scanPositions.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                        scannedCount++;
+                    }
+                } else {
+                    return;
+                }
+            } else {
+                if (matrix.SSCC() == null) {
+                    //checkEanSgtin(matrix);
+                    positionsAdapter.addItem(matrix.SGTIN());
+                    viewModel.addPositions(matrix.SGTIN());
+                    scanPositions.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                    scannedCount++;
+                } else {
+                    positionsAdapter.addItem(matrix.SSCC());
+                    viewModel.addPositions(matrix.SSCC());
+                    scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                    scannedCount++;
+                }
+                if (positionsAdapter.getItemCount() == totalCount) {
+                    showSaveDialog(getString(R.string.scan_finish));
+                }
             }
-        }*/
-        if (positions != null && !positions.contains(decoded)) {
-            Toast.makeText(this, R.string.wrong_package_specification, Toast.LENGTH_SHORT).show();
+            updateScannedPositions();
+        } else {
             return;
         }
+    }
 
-        positions = viewModel.getScannedPositions().getValue();
-
-        if (positions != null && positions.contains(decoded)) {
-            Toast.makeText(this, R.string.already_scanned, Toast.LENGTH_SHORT).show();
-            return;
+    private boolean checkPosition(List<String> posList, DataMatrix matrix) {
+        Boolean check = false;
+        for (String s : posList) {
+            if (s.equals(matrix.SGTIN()) || s.equals(matrix.SSCC())) {
+                check = false;
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Штрих-код уже был просканирован!", Toast.LENGTH_SHORT);
+                toast.show();
+                break;
+            } else {
+                check = true;
+            }
         }
+        return check;
+    }
 
-        scannedCount++;
-        positionsAdapter.addItem(decoded);
-        viewModel.addPositions(decoded);
-        totalConsumptionPositionsTextView.setText("(" + scannedConsumptionPositions.size() + "/" + totalCount + ")");
+    private void checkEanSgtin(DataMatrix matrix) {
+        if (Ean != null) {
+            if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean) && Ean.equals(matrix.EAN())) {
+                return;
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "EAN-13 не совпадает!", Toast.LENGTH_LONG);
+                toast.show();
+                errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
+            }
+        }
+    }
+
+
+    private void errorSgtinEanDialog(String message, String sgtin) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            dialog.dismiss();
+            positionsAdapter.removeItem(sgtin);
+            scannedCount--;
+            updateScannedPositions();
+        });
+        builder.setNegativeButton(R.string.no, (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.show();
+    }
+
+
+    private void updateScannedPositions() {
+        totalConsumptionPositionsTextView.setText("(" + scannedCount + "/" + totalCount + ")");
     }
 
     private List<String> getPositions(List<Position> positions) {
@@ -185,7 +272,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     }
 
     public void onBackPressed() {
-        if (scannedCount > viewModel.getScannedPositions().getValue().size()) {
+        if (scannedCount > startCount) {
             showSaveDialog(getString(R.string.save_scan));
         } else {
             finish();
@@ -199,7 +286,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 PreferenceController.getInstance().getUserId(),
                 getIntent().getExtras().getString(ID),
                 getIntent().getExtras().getString(NAME),
-                viewModel.getScannedPositions().getValue())
+                scanPositions)
                 .observe(this, this);
     }
 

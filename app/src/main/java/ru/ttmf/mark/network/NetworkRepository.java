@@ -38,6 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.ttmf.mark.positions.ReverseSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class NetworkRepository {
@@ -77,10 +78,12 @@ public class NetworkRepository {
             final TrustManager[] trustManager = new TrustManager[]{
                     new X509TrustManager() {
                         @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) { }
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                        }
 
                         @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) { }
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+                        }
 
                         @Override
                         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -169,8 +172,11 @@ public class NetworkRepository {
         String action = "";
 
         switch (type) {
-            case TTN:
+            case TTN_DIRECT:
                 action = "GET_TTN_SHIFRS2";
+                break;
+            case TTN_REVERSE:
+                action = "GET_TTN_SHIFRS3";
                 break;
             case PV:
                 action = "GET_PV_SHIFRS";
@@ -210,39 +216,48 @@ public class NetworkRepository {
 
     }
 
-    public LiveData<Response> getPositions(String token, String cipher) {
+    public LiveData<Response> getPositions(DataType type, String token, String cipher) {
+        String action = "";
+        switch (type) {
+            case TTN_DIRECT:
+                action = "GET_SHIFR_SGTINS2";
+                break;
+            case TTN_REVERSE:
+                action = "GET_SHIFR_SGTINS3";
+                break;
+        }
 
         MutableLiveData<Response> liveData = new MutableLiveData<>();
         liveData.postValue(new Response(QueryType.GetPositions, NetworkStatus.LOADING));
-        apiService.getPositions(new BaseModel("GET_SHIFR_SGTINS2", new PositionData(token, cipher)))
+        apiService.getPositions(new BaseModel(action, new PositionData(token, cipher)))
                 .enqueue(new Callback<PositionsResponse>() {
-            @Override
-            public void onResponse(Call<PositionsResponse> call, retrofit2.Response<PositionsResponse> response) {
-                if (response.isSuccessful()  && response.body() != null && response.body().isSuccess()) {
-                    liveData.postValue(new Response(response.body().getPositions(), QueryType.GetPositions, NetworkStatus.SUCCESS));
-                } else {
-                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
-                        liveData.postValue(new Response(
-                                QueryType.GetPositions,
-                                NetworkStatus.ERROR,
-                                response.body().getErrorText()));
-                    } else {
-                        liveData.postValue(new Response(
-                                QueryType.GetPositions,
-                                NetworkStatus.ERROR,
-                                ""));
+                    @Override
+                    public void onResponse(Call<PositionsResponse> call, retrofit2.Response<PositionsResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                            liveData.postValue(new Response(response.body().getPositions(), QueryType.GetPositions, NetworkStatus.SUCCESS));
+                        } else {
+                            if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                                liveData.postValue(new Response(
+                                        QueryType.GetPositions,
+                                        NetworkStatus.ERROR,
+                                        response.body().getErrorText()));
+                            } else {
+                                liveData.postValue(new Response(
+                                        QueryType.GetPositions,
+                                        NetworkStatus.ERROR,
+                                        ""));
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<PositionsResponse> call, Throwable t) {
-                liveData.postValue(new Response(
-                        QueryType.GetPositions,
-                        NetworkStatus.ERROR,
-                        "INTERNET ERROR"));
-            }
-        });
+                    @Override
+                    public void onFailure(Call<PositionsResponse> call, Throwable t) {
+                        liveData.postValue(new Response(
+                                QueryType.GetPositions,
+                                NetworkStatus.ERROR,
+                                "INTERNET ERROR"));
+                    }
+                });
         return liveData;
 
     }
@@ -253,13 +268,16 @@ public class NetworkRepository {
                                             String userId,
                                             String itemId,
                                             String name,
-                                            List<String> positions) {
+                                            Object positions) {
 
         String action = "";
 
         switch (type) {
-            case TTN:
+            case TTN_DIRECT:
                 action = "SET_SGTIN2";
+                break;
+            case TTN_REVERSE:
+                action = "SET_SGTIN3";
                 break;
             case PV:
                 action = "SET_PV_SGTINS";
@@ -268,8 +286,7 @@ public class NetworkRepository {
 
         MutableLiveData<Response> liveData = new MutableLiveData<>();
         liveData.postValue(new Response(QueryType.SavePositions, NetworkStatus.LOADING));
-        apiService.savePositions(new BaseModel(action, new SavePositionsData(
-                type, token, userId, itemId, name, positions))).enqueue(new Callback<BaseResponse>() {
+        apiService.savePositions(new BaseModel(action, new SavePositionsData(type, token, userId, itemId, name, positions))).enqueue(new Callback<BaseResponse>() {
             @Override
             public void onResponse(Call<BaseResponse> call, retrofit2.Response<BaseResponse> response) {
                 if (response.isSuccessful() && response.isSuccessful()) {
@@ -308,7 +325,7 @@ public class NetworkRepository {
                 .enqueue(new Callback<ConsumptionResponse>() {
                     @Override
                     public void onResponse(Call<ConsumptionResponse> call, retrofit2.Response<ConsumptionResponse> response) {
-                        if (response.isSuccessful()  && response.body() != null && response.body().isSuccess()) {
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                             liveData.postValue(new Response(response.body().getData(), QueryType.GetConsumptionPositions, NetworkStatus.SUCCESS));
                         } else {
                             if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
@@ -345,7 +362,7 @@ public class NetworkRepository {
                 .enqueue(new Callback<BaseResponse>() {
                     @Override
                     public void onResponse(Call<BaseResponse> call, retrofit2.Response<BaseResponse> response) {
-                        if (response.isSuccessful()  && response.body() != null && response.body().isSuccess()) {
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                             liveData.postValue(new Response(response.body(), QueryType.SaveConsumptionPositions, NetworkStatus.SUCCESS));
                         } else {
                             if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {

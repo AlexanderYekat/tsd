@@ -27,7 +27,7 @@ public class SavePositionsData {
     private String pvsId;
 
     @SerializedName("Sgtins")
-    private List<String> items;
+    private Object items;
 
 
     public SavePositionsData(DataType type,
@@ -35,14 +35,15 @@ public class SavePositionsData {
                              String userId,
                              String itemId,
                              String name,
-                             List<String> items) {
+                             Object items) {
 
         this.token = token;
         this.userId = userId;
         this.items = items;
 
         switch (type) {
-            case TTN:
+            case TTN_REVERSE:
+            case TTN_DIRECT:
                 ttnItemId = name;
                 ttnSpecItemId = itemId;
                 break;

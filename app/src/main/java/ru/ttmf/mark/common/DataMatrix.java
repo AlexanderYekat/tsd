@@ -83,4 +83,7 @@ public class DataMatrix {
     public final String SSCC() {
         return (this.SSCC);
     }
+    public final String EAN() {
+        return (this.SGTIN().substring(1,14));
+    }
 }

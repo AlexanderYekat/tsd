@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModel;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.NetworkRepository;
+import ru.ttmf.mark.positions.ReverseSaveModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class ConsumptionPositionsViewModel extends ViewModel {
                                             String userId,
                                             String itemId,
                                             String name,
-                                            List<String> positions) {
+                                            List<ReverseSaveModel> positions) {
 
         return NetworkRepository.getInstance().savePositions(dataType, token, userId, itemId, name, positions);
     }

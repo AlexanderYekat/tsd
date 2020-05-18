@@ -16,6 +16,9 @@
     <string name="save">Сохранить</string>
     <string name="web_service_url">URL веб-сервиса:</string>
     <string name="coming">Приход</string>
+    <string name="direct_coming">Прямой Приход</string>
+    <string name="reverse_coming">Обратный Приход</string>
+    <string name="direct_reverse">Тип прихода</string>
     <string name="result_tv_text">Результат:</string>
     <string name="result_text">Результат запроса</string>
     <string name="consumption">Расход</string>

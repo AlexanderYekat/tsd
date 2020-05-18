@@ -15,8 +15,8 @@ public class PositionsViewModel extends ViewModel {
 
     private DataType dataType;
 
-    public LiveData<Response> loadPositions(String token, String cipher) {
-        return NetworkRepository.getInstance().getPositions(token, cipher);
+    public LiveData<Response> loadPositions (String token, String cipher) {
+        return NetworkRepository.getInstance().getPositions(dataType, token, cipher);
     }
 
 
@@ -24,7 +24,7 @@ public class PositionsViewModel extends ViewModel {
                                             String userId,
                                             String itemId,
                                             String name,
-                                            List<String> positions) {
+                                            Object positions) {
 
         return NetworkRepository.getInstance().savePositions(dataType, token, userId, itemId, name, positions);
     }
