@@ -22,7 +22,8 @@ public class SearchData {
         this.userId = userId;
 
         switch (type) {
-            case TTN:
+            case TTN_REVERSE:
+            case TTN_DIRECT:
                 ttnName = name;
                 break;
             case PV:

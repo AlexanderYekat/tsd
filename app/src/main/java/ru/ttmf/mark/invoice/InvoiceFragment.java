@@ -37,6 +37,7 @@ public class InvoiceFragment extends BaseFragment implements
     public static final String NAME = "NAME";
     public static final String CIPHER = "CIPHER";
     public static final String COUNT = "COUNT";
+    public static final String EAN13 = "EAN13";
 
     private static final String INVOICES = "invoices";
     private static final String CODE = "code";
@@ -88,17 +89,23 @@ public class InvoiceFragment extends BaseFragment implements
         Intent intent = null;
 
         switch (searchViewModel.getDataType()) {
-            case TTN:
+            case TTN_DIRECT:
                 intent = new Intent(getContext(), PositionsActivity.class);
+                intent.putExtra("TTN_TYPE", "0");
+                break;
+            case TTN_REVERSE:
+                intent = new Intent(getContext(), PositionsActivity.class);
+                intent.putExtra("TTN_TYPE", "1");
                 break;
             case PV:
-                 intent = new Intent(getContext(), ConsumptionPositionsActivity.class);
+                intent = new Intent(getContext(), ConsumptionPositionsActivity.class);
                 break;
         }
 
         intent.putExtra(CIPHER, invoice.getCipher());
         intent.putExtra(ID, invoice.getId());
         intent.putExtra(COUNT, invoice.getCount());
+        intent.putExtra(EAN13, invoice.getEan13());
         intent.putExtra(NAME, getArguments().getString(CODE));
         intent.putExtra(DATA_TYPE, searchViewModel.getDataType());
         startActivityForResult(intent, POSITIONS_SCANNED);

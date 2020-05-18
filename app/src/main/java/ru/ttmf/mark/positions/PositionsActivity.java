@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewDebug;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.okhttp.internal.framed.Variant;
 
@@ -31,19 +32,25 @@ import ru.ttmf.mark.network.model.Position;
 import ru.ttmf.mark.preference.PreferenceController;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static ru.ttmf.mark.Helpers.Helpers.isNumeric;
 import static ru.ttmf.mark.invoice.InvoiceFragment.*;
 
 public class PositionsActivity extends ScanActivity implements Observer<Response>, PositionsAdapter.OnPositionClickListener {
 
     private PositionsViewModel viewModel;
     private ProgressDialog progressDialog;
-    private Integer totalPositions = 0;
-    private Integer scannedPositions = 0;
+    private Integer totalPositions;
+    private Integer scannedPositions;
+    private String TTN_TYPE;
+    private String Ean;
+    private Object savePosition;
+    private List<ReverseSaveModel> reverseDirectPosition;
     @BindView(R.id.positions)
     RecyclerView rvPositions;
 
@@ -67,10 +74,13 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 .get(PositionsViewModel.class);
         String cipherText = getIntent().getExtras().getString(CIPHER);
         String id = getIntent().getExtras().getString(ID);
-
+        Ean = getIntent().getExtras().getString(EAN13);
+        totalPositions = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
+        reverseDirectPosition = new ArrayList<ReverseSaveModel>();
         if (getIntent().getExtras() != null)
             viewModel.setDataType((DataType) getIntent().getSerializableExtra(DATA_TYPE));
 
+        TTN_TYPE = getIntent().getExtras().getString("TTN_TYPE");
         viewModel.loadPositions(PreferenceController.getInstance().getToken(), id).observe(this, this);
         cipher.setText(getString(R.string.cipher, cipherText));
         IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
@@ -116,17 +126,15 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                         hideProgressDialog();
                         List<Position> positionsList = (List<Position>) response.getObject();
                         viewModel.setPositions(positionsList);
-                        totalPositions = positionsList.size();
-                        totalPositionsTextView.setText("(" + 0 + "/" + totalPositions + ")");
+                        scannedPositions = positionsList.size();
+                        totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
                         initPositionsRecycler(positionsList);
                         break;
                     case SavePositions:
                         hideProgressDialog();
                         finish();
                         break;
-
                 }
-
                 break;
         }
     }
@@ -140,31 +148,118 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
     private void successfulScan(String code) {
         DataMatrix matrix = new DataMatrix();
-        DataMatrixHelpers.splitStr(matrix, code, 29);
+        try {
+            DataMatrixHelpers.splitStr(matrix, code, 29);
 
-        for (int i = 0; i < positionsAdapter.getItems().size(); i++) {
+            if (TTN_TYPE.equals("1")) {
+                ReverseScan(positionsAdapter.getItems(), matrix, code);
+                savePosition = reverseDirectPosition;
+            } else {
+                DirectScan(positionsAdapter.getItems(), matrix);
+                savePosition = getPositions(viewModel.getPositions());
+            }
+        } catch (Exception ex) {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Неверный штрихкод!", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+    }
+
+
+    private void DirectScan(List<Position> posList, DataMatrix matrix) {
+        for (int i = 0; i < posList.size(); i++) {
             if (positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SGTIN()) || positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SSCC())) {
                 scannedPositions++;
-                totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
-
                 if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
                     positionsAdapter.removeItem(matrix.SSCC());
                 } else {
                     positionsAdapter.removeItem(matrix.SGTIN());
                 }
+                if (positionsAdapter.getItemCount() == 0) {
+                    showSaveDialog(getString(R.string.scan_finish));
+                }
             }
         }
+        updateScannedPositions();
+    }
 
-        if (positionsAdapter.getItemCount() == 0) {
-            showSaveDialog(getString(R.string.scan_finish));
+    private void ReverseScan(List<Position> posList, DataMatrix matrix, String code) {
+        if (posList.size() > 0) {
+            if (checkPosition(posList, matrix)) {
+                if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
+                    positionsAdapter.addItem(matrix.SSCC());
+                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                } else {
+                    checkEanSgtin(matrix);
+                    positionsAdapter.addItem(matrix.SGTIN());
+                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                }
+                scannedPositions++;
+            } else {
+                return;
+            }
+        } else {
+            if (matrix.SSCC() == null) {
+                checkEanSgtin(matrix);
+                positionsAdapter.addItem(matrix.SGTIN());
+                reverseDirectPosition.add(new ReverseSaveModel(matrix.SGTIN(), code));
+            } else {
+                positionsAdapter.addItem(matrix.SSCC());
+                reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
+            }
+            if (positionsAdapter.getItemCount() == totalPositions) {
+                showSaveDialog(getString(R.string.scan_finish));
+            }
+            scannedPositions++;
         }
+        updateScannedPositions();
+    }
+
+    private boolean checkPosition(List<Position> posList, DataMatrix matrix) {
+        Boolean check = false;
+        for (Position s : posList) {
+            if (s.getSgTin().equals(matrix.SGTIN()) || s.getSgTin().equals(matrix.SSCC())) {
+                check = false;
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Штрих-код уже был просканирован!", Toast.LENGTH_SHORT);
+                toast.show();
+                break;
+            } else {
+                check = true;
+            }
+        }
+        return check;
+    }
+
+    private void checkEanSgtin(DataMatrix matrix) {
+        if (Ean != null) {
+            if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean) && Ean.equals(matrix.EAN())) {
+                return;
+            } else {
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "EAN-13 не совпадает!", Toast.LENGTH_LONG);
+                toast.show();
+                errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
+            }
+        }
+    }
+
+    private void updateScannedPositions() {
+        totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
     }
 
     private List<String> getPositions(List<Position> positions) {
         List<String> res = new ArrayList<>();
-        positions.removeAll(positionsAdapter.getItems());
-        for (Position position : positions) {
-            res.add(position.getSgTin());
+        if (TTN_TYPE.equals("1")) {
+            for (Position position : positionsAdapter.getItems()) {
+                res.add(position.getSgTin());
+            }
+        } else {
+            positions.removeAll(positionsAdapter.getItems());
+            for (Position position : positions) {
+                res.add(position.getSgTin());
+            }
         }
         return res;
     }
@@ -185,8 +280,23 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 PreferenceController.getInstance().getUserId(),
                 getIntent().getExtras().getString(ID),
                 getIntent().getExtras().getString(NAME),
-                getPositions(viewModel.getPositions()))
+                savePosition)
                 .observe(this, this);
+    }
+
+    private void errorSgtinEanDialog(String message, String sgtin) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            dialog.dismiss();
+            positionsAdapter.removeItem(sgtin);
+            scannedPositions--;
+            updateScannedPositions();
+        });
+        builder.setNegativeButton(R.string.no, (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.show();
     }
 
     private void showSaveDialog(String message) {

@@ -2,6 +2,8 @@ package ru.ttmf.mark.network.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import ru.ttmf.mark.common.DataType;
+
 public class PositionData {
 
     @SerializedName("token")
