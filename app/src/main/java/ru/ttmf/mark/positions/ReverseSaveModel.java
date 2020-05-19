@@ -5,7 +5,7 @@ public class ReverseSaveModel {
     public String FullSgtin;
 
     public ReverseSaveModel(String Item, String fullItem){
-        this.Sgtin = Sgtin;
-        this.FullSgtin = FullSgtin;
+        this.Sgtin = Item;
+        this.FullSgtin = fullItem;
     }
 }
