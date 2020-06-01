@@ -77,13 +77,22 @@ public class DataMatrix {
     }
 
     public final String SGTIN() {
-        return (this.GTIN + this.SN);
+        if (this.GTIN != null) {
+            return (this.GTIN + this.SN);
+        } else {
+            return null;
+        }
     }
 
     public final String SSCC() {
-        return (this.SSCC);
+        if (this.GTIN != null) {
+            return (this.SSCC);
+        } else {
+            return null;
+        }
     }
+
     public final String EAN() {
-        return (this.SGTIN().substring(1,14));
+        return (this.SGTIN().substring(1, 14));
     }
 }
