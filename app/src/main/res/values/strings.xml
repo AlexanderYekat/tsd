@@ -2,8 +2,8 @@
     <string name="app_name">Маркировка ТСД</string>
     <string name="userData">Имя пользователя</string>
     <string name="password">Пароль</string>
-    <string name="enter">Вход 1.18</string>
-    <string name="settings">Настройки 1.18</string>
+    <string name="enter">Вход</string>
+    <string name="settings">Настройки</string>
     <string name="scan_sscc">отсканируйте SSCC</string>
     <string name="mark_id">Идентификатор МД</string>
     <string name="mark_id_text_view">Идентификатор МД:</string>
