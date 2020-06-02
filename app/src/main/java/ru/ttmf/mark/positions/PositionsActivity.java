@@ -46,7 +46,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private PositionsViewModel viewModel;
     private ProgressDialog progressDialog;
     private Integer totalPositions;
-    private Integer scannedPositions;
+    private Integer scannedPositions = 0;
     private String TTN_TYPE;
     private String Ean;
     private Object savePosition;
@@ -75,7 +75,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         String cipherText = getIntent().getExtras().getString(CIPHER);
         String id = getIntent().getExtras().getString(ID);
         Ean = getIntent().getExtras().getString(EAN13);
-        totalPositions = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
+        //totalPositions = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
         reverseDirectPosition = new ArrayList<ReverseSaveModel>();
         if (getIntent().getExtras() != null)
             viewModel.setDataType((DataType) getIntent().getSerializableExtra(DATA_TYPE));
@@ -126,7 +126,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                         hideProgressDialog();
                         List<Position> positionsList = (List<Position>) response.getObject();
                         viewModel.setPositions(positionsList);
-                        scannedPositions = positionsList.size();
+                        totalPositions = positionsList.size();
                         totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
                         initPositionsRecycler(positionsList);
                         break;
@@ -155,8 +155,8 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 ReverseScan(positionsAdapter.getItems(), matrix, code);
                 savePosition = reverseDirectPosition;
             } else {
-                DirectScan(positionsAdapter.getItems(), matrix);
-                savePosition = getPositions(viewModel.getPositions());
+                DirectScan(positionsAdapter.getItems(), matrix, code);
+                savePosition = reverseDirectPosition;
             }
         } catch (Exception ex) {
             Toast toast = Toast.makeText(getApplicationContext(),
@@ -167,14 +167,16 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     }
 
 
-    private void DirectScan(List<Position> posList, DataMatrix matrix) {
+    private void DirectScan(List<Position> posList, DataMatrix matrix, String code) {
         for (int i = 0; i < posList.size(); i++) {
             if (positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SGTIN()) || positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SSCC())) {
                 scannedPositions++;
-                if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
+                if (matrix.SGTIN() == null) {
                     positionsAdapter.removeItem(matrix.SSCC());
+                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
                 } else {
                     positionsAdapter.removeItem(matrix.SGTIN());
+                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SGTIN(), code));
                 }
                 if (positionsAdapter.getItemCount() == 0) {
                     showSaveDialog(getString(R.string.scan_finish));
@@ -187,7 +189,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private void ReverseScan(List<Position> posList, DataMatrix matrix, String code) {
         if (posList.size() > 0) {
             if (checkPosition(posList, matrix)) {
-                if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
+                if (matrix.SGTIN() == null) {
                     positionsAdapter.addItem(matrix.SSCC());
                     reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
                 } else {

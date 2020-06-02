@@ -154,6 +154,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
         DataMatrix matrix = new DataMatrix();
         try {
+            //преобразование штрихкода в SGTIN или SCCC
             DataMatrixHelpers.splitStr(matrix, code, 29);
 
             //////////////BASE 64 QRCODE//////////////////////
@@ -161,30 +162,42 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             //byte[] code64 = android.util.Base64.encode(codeBytes, Base64.DEFAULT);
             //String code64String = new String(code64);
 
-            Scan(positionsAdapter.getItems(), matrix, code);
+            //если преобразование успешное, то продолжить
+            if (matrix.SGTIN() != null || matrix.SSCC() != null) {
+                Scan(positionsAdapter.getItems(), matrix, code);
+            } else {
+                ToastMessage("Некорректный штрихкод!");
+            }
         } catch (Exception ex) {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Неверный штрихкод!", Toast.LENGTH_SHORT);
-            toast.show();
-            return;
+            ToastMessage("Некорректный штрихкод!");
         }
+
+    }
+
+    private void ToastMessage(String message) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+        return;
     }
 
     private void Scan(List<String> posList, DataMatrix matrix, String code) {
+        //если отсканированнные штрихкоды меньше всего штрихкодов, то продолжить сканирование
         if (scannedCount != totalCount) {
+            //если кол-во отсканированных больше 0, то сохранять только уникальные SGTIN-ы
             if (posList.size() > 0) {
                 if (checkPosition(posList, matrix)) {
-                    if ((matrix.SGTIN().equals("nullnull")) && !(matrix.SSCC().equals("null"))) {
-                        positionsAdapter.addItem(matrix.SSCC());
-                        viewModel.addPositions(matrix.SSCC());
-                        scannedCount++;
-                        scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
-                    } else {
-                        //нет проверки на еан в методе нет еан кода
-                        //checkEanSgtin(matrix);
+                    if (matrix.SSCC() == null) {
+                        //проверка на ean-code
+                        checkEanSgtin(matrix);
                         positionsAdapter.addItem(matrix.SGTIN());
                         viewModel.addPositions(matrix.SGTIN());
                         scanPositions.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                        scannedCount++;
+                    } else {
+                        positionsAdapter.addItem(matrix.SSCC());
+                        viewModel.addPositions(matrix.SSCC());
+                        scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
                         scannedCount++;
                     }
                 } else {
@@ -192,7 +205,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 }
             } else {
                 if (matrix.SSCC() == null) {
-                    //checkEanSgtin(matrix);
+                    //проверка на ean-code
+                    checkEanSgtin(matrix);
                     positionsAdapter.addItem(matrix.SGTIN());
                     viewModel.addPositions(matrix.SGTIN());
                     scanPositions.add(new ReverseSaveModel(matrix.SGTIN(), code));
@@ -203,7 +217,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                     scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
                     scannedCount++;
                 }
-                if (positionsAdapter.getItemCount() == totalCount) {
+                if (scannedCount == totalCount) {
                     showSaveDialog(getString(R.string.scan_finish));
                 }
             }
@@ -212,6 +226,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             return;
         }
     }
+
 
     private boolean checkPosition(List<String> posList, DataMatrix matrix) {
         Boolean check = false;
@@ -230,18 +245,15 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     }
 
     private void checkEanSgtin(DataMatrix matrix) {
-        if (Ean != null) {
-            if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean) && Ean.equals(matrix.EAN())) {
-                return;
-            } else {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "EAN-13 не совпадает!", Toast.LENGTH_LONG);
-                toast.show();
-                errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
-            }
+        if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean) && Ean.equals(matrix.EAN())) {
+            return;
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "EAN-13 не совпадает!", Toast.LENGTH_LONG);
+            toast.show();
+            errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
         }
     }
-
 
     private void errorSgtinEanDialog(String message, String sgtin) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
