@@ -160,7 +160,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             }
         } catch (Exception ex) {
             Toast toast = Toast.makeText(getApplicationContext(),
-                    "Неверный штрихкод!", Toast.LENGTH_SHORT);
+                    "Некорректный штрихкод!", Toast.LENGTH_SHORT);
             toast.show();
             return;
         }
@@ -168,6 +168,8 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
 
     private void DirectScan(List<Position> posList, DataMatrix matrix, String code) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                "Неверный штрихкод!", Toast.LENGTH_SHORT);
         for (int i = 0; i < posList.size(); i++) {
             if (positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SGTIN()) || positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SSCC())) {
                 scannedPositions++;
@@ -182,6 +184,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                     showSaveDialog(getString(R.string.scan_finish));
                 }
             }
+            toast.show();
         }
         updateScannedPositions();
     }

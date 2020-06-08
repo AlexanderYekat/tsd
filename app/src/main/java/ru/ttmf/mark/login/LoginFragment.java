@@ -128,5 +128,4 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
                 break;
         }
     }
-
 }

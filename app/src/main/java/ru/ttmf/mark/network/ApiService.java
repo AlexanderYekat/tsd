@@ -30,4 +30,7 @@ public interface ApiService {
 
     @POST(".")
     Call<BaseResponse> saveConsumptionPositions(@Body BaseModel positions);
+
+    @POST(".")
+    Call<String> version(@Body int version);
 }

@@ -248,13 +248,14 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean)) {
             if (Ean.equals(matrix.EAN())) {
                 return;
-            }
-            else {
+            } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "EAN-13 не совпадает!", Toast.LENGTH_LONG);
                 toast.show();
                 errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
             }
+        } else {
+            Ean = matrix.EAN();
         }
     }
 

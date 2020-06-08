@@ -19,6 +19,7 @@ public class PreferenceController {
     private static final String REMEMBER_AUTH = "remember_auth";
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
+    private static final String VERSION = "version";
 
 
     public static PreferenceController getInstance() {
@@ -44,6 +45,10 @@ public class PreferenceController {
         return sharedPreferences.getString(USER_NAME, "");
     }
 
+    public Integer getVersion() {
+        return sharedPreferences.getInt(VERSION,120);
+    }
+
     public String getUrl() {
         return sharedPreferences.getString(URL, "https://med.ttmf.ru/mark/api/mark/");
     }
@@ -62,6 +67,10 @@ public class PreferenceController {
 
     public void setUserName(String name) {
         sharedPreferences.edit().putString(USER_NAME, name).apply();
+    }
+
+    public void setVersion(Integer version) {
+        sharedPreferences.edit().putInt(VERSION, version).apply();
     }
 
     public void setUrl(String url) {
@@ -97,7 +106,7 @@ public class PreferenceController {
     }
 
 
-    public void clear(){
+    public void clear() {
         setUserId("");
         setUserName("");
         setToken("");

@@ -44,6 +44,7 @@ import ru.ttmf.mark.preference.PreferenceController;
 public class NetworkRepository {
     private static NetworkRepository instance;
     private ApiService apiService;
+    private ApiService officeApiService;
 
     public NetworkRepository() {
 
@@ -51,6 +52,13 @@ public class NetworkRepository {
 
         apiService = new Retrofit.Builder()
                 .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(createHttpClient())
+                .build()
+                .create(ApiService.class);
+
+        officeApiService = new Retrofit.Builder()
+                .baseUrl("https://office2.ttmf.ru/KassaWeb/api/ArtisProgramVersionCheck/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(createHttpClient())
                 .build()
@@ -127,6 +135,27 @@ public class NetworkRepository {
 
     public static void refresh() {
         instance = null;
+    }
+
+    public LiveData<Response> version() {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.Version, NetworkStatus.LOADING));
+        officeApiService.version(18).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    liveData.postValue(new Response(response.body(), QueryType.Login, NetworkStatus.SUCCESS));
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.Login,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
     }
 
     public LiveData<Response> login(String login, String password) {

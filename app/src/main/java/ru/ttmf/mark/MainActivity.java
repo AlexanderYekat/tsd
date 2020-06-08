@@ -1,9 +1,12 @@
 package ru.ttmf.mark;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -17,10 +20,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
 import ru.ttmf.mark.home.HomeFragment;
 import ru.ttmf.mark.login.LoginFragment;
+import ru.ttmf.mark.network.NetworkRepository;
 import ru.ttmf.mark.preference.PreferenceController;
 import ru.ttmf.mark.search_consumption.ConsumptionSearchViewModel;
 
@@ -43,7 +48,6 @@ public class MainActivity extends ScanActivity
         ButterKnife.bind(this);
         initToolbar(toolbar);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
-
         intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver((type, length, barcode)
                 -> searchViewModel.setSearchTerm(barcode));
 
@@ -51,6 +55,10 @@ public class MainActivity extends ScanActivity
             showFragment(new LoginFragment(), getString(R.string.enter), true, false);
         } else {
             showFragment(new HomeFragment(), getString(R.string.menu), true, false);
+        }
+        LiveData version = NetworkRepository.getInstance().version();
+        if (PreferenceController.getInstance().getVersion() != version.getValue()) {
+            showDialog("Вышла новая версия программы!\nНачать скачивание?");
         }
     }
 
@@ -160,4 +168,31 @@ public class MainActivity extends ScanActivity
         hideKeyboard();
     }
 
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            dialog.dismiss();
+            startDownload();
+        });
+        builder.setNegativeButton(R.string.no, (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.show();
+    }
+
+    private void startDownload() {
+        final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+        try {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            } catch (android.content.ActivityNotFoundException anfe) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
+        } catch (Exception ex) {
+            Intent browserIntent = new
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://office2.ttmf.ru/ProgramLogs/api/TSDgetapk"));
+            startActivity(browserIntent);
+        }
+    }
 }
