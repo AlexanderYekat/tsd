@@ -85,7 +85,7 @@ public class DataMatrix {
     }
 
     public final String SSCC() {
-        if (this.GTIN != null) {
+        if (this.SSCC != null) {
             return (this.SSCC);
         } else {
             return null;
