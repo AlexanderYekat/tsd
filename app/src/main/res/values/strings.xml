@@ -42,7 +42,7 @@
     <string name="delete_scan">Все отсканированные позиции будут удалены!</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="menu">Меню (версия 1.19)</string>
+    <string name="menu">Меню (версия 1.20)</string>
     <string name="need_relogin">Токен устарел, нуобходимо выполнить повторный вход</string>
     <string name="please_wait">Пожалуйста, подождите</string>
     <string name="loading">Загрузка</string>

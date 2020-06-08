@@ -37,8 +37,26 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
     public void onBindViewHolder(@NonNull InvoiceData holder, int position) {
         holder.itemView.setTag(position);
         Invoice invoice = invoices.get(position);
-        holder.count.setText(invoice.getCount() + " уп");
-        holder.id.setText(invoice.getId());
+
+        int temp_scan_count = 0;
+        int temp_count_int = 0;
+        double temp_count_double = 0.0;
+
+        temp_scan_count = (int)Double.parseDouble(invoice.getScanCount());
+        temp_count_double = Double.parseDouble(invoice.getCount());
+
+        if (temp_count_double % 1 > 0) {
+            holder.count.setText("(" + temp_scan_count + " из "+ temp_count_double + " уп)");
+        }
+        else
+        {
+            temp_count_int = (int) temp_count_double;
+            holder.count.setText("(" + temp_scan_count + " из "+ temp_count_int + " уп)");
+        }
+
+        //holder.count.setText(invoice.getCount() + " уп");
+        //holder.id.setText(invoice.getId());
+        holder.id.setText(invoice.getCipher());
         holder.name.setText(invoice.getName());
     }
 
