@@ -20,6 +20,7 @@ public class PreferenceController {
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
     private static final String VERSION = "version";
+    private static final String LAST_VERSION = "last_version";
 
 
     public static PreferenceController getInstance() {
@@ -49,6 +50,10 @@ public class PreferenceController {
         return sharedPreferences.getInt(VERSION,120);
     }
 
+    public Integer getLastVersion() {
+        return sharedPreferences.getInt(LAST_VERSION,0);
+    }
+
     public String getUrl() {
         return sharedPreferences.getString(URL, "https://med.ttmf.ru/mark/api/mark/");
     }
@@ -71,6 +76,10 @@ public class PreferenceController {
 
     public void setVersion(Integer version) {
         sharedPreferences.edit().putInt(VERSION, version).apply();
+    }
+
+    public void setLastVersion(Integer last_version) {
+        sharedPreferences.edit().putInt(LAST_VERSION, last_version).apply();
     }
 
     public void setUrl(String url) {

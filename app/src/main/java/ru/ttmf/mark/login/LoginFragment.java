@@ -1,7 +1,10 @@
 package ru.ttmf.mark.login;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -57,12 +60,41 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
     @OnClick(R.id.login)
     public void login() {
         hideKeyboard();
+
+        int cur_version = PreferenceController.getInstance().getVersion();
+        int last_version = PreferenceController.getInstance().getLastVersion();
+
+        if (cur_version < last_version) {
+            showDialog("Версия программы не является актуальной!");
+        }
+
         viewModel.login(
                 userField.getText().toString(),
                 this.hasGet(passwordField.getText().toString()))
                 .observe(this, this::onChanged);
     }
 
+    private void showDialog(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message);
+        /*.setPositiveButton(R.string.yes, (dialog, which) -> {
+            dialog.dismiss();
+            startDownload();
+        });
+        builder.setNegativeButton(R.string.no, (dialog, which) -> {
+            dialog.dismiss();
+        });*/
+        builder.show();
+    }
+
+    /*private void startDownload() {
+        try {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://office2.ttmf.ru/ProgramLogs/api/TSDgetapk"));
+            startActivity(browserIntent);
+        }
+        catch (Exception ex) {
+        }
+    }*/
 
     @OnClick(R.id.btn_settings)
     public void onSettingsButtonClick() {

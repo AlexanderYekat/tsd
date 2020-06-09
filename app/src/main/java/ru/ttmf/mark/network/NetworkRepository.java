@@ -1,5 +1,6 @@
 package ru.ttmf.mark.network;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.text.TextUtils;
@@ -145,6 +146,14 @@ public class NetworkRepository {
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     liveData.postValue(new Response(response.body(), QueryType.Login, NetworkStatus.SUCCESS));
+
+                    int last_version = 0;
+                    String t_obj = response.body();
+                    if (t_obj != null) {
+                        last_version =  Integer.parseInt(t_obj);
+                    }
+
+                    PreferenceController.getInstance().setLastVersion(last_version);
                 }
             }
             @Override
@@ -157,6 +166,8 @@ public class NetworkRepository {
         });
         return liveData;
     }
+
+
 
     public LiveData<Response> login(String login, String password) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();

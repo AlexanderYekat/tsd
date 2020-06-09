@@ -3,6 +3,7 @@ package ru.ttmf.mark;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -22,10 +23,16 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.annotations.SerializedName;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
+import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.home.HomeFragment;
 import ru.ttmf.mark.login.LoginFragment;
 import ru.ttmf.mark.network.NetworkRepository;
+import ru.ttmf.mark.network.model.UserData;
 import ru.ttmf.mark.preference.PreferenceController;
 import ru.ttmf.mark.search_consumption.ConsumptionSearchViewModel;
 
@@ -33,7 +40,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends ScanActivity
-        implements FragmentManager.OnBackStackChangedListener,
+        implements //Observer<Response>,
+        FragmentManager.OnBackStackChangedListener,
         android.support.v4.app.FragmentManager.OnBackStackChangedListener {
 
     @BindView(R.id.toolbar)
@@ -56,11 +64,39 @@ public class MainActivity extends ScanActivity
         } else {
             showFragment(new HomeFragment(), getString(R.string.menu), true, false);
         }
-        LiveData version = NetworkRepository.getInstance().version();
-        if (PreferenceController.getInstance().getVersion() != version.getValue()) {
+
+
+        LiveData version;
+        int cur_version = PreferenceController.getInstance().getVersion();
+        //int last_version = 0;
+        //int check_version_attempt_count = 30;
+
+        NetworkRepository.getInstance().version();
+        /*Object t_obj = version.getValue();
+        if (t_obj != null) {
+            last_version = (int) t_obj;
+        }*/
+
+        /*while (last_version == 0 && (check_version_attempt_count > 0)) {
+            if (last_version == 0  && check_version_attempt_count != 0) {
+                version = NetworkRepository.getInstance().version();
+                Object t_obj = version.getValue();
+                if (t_obj != null) {
+                    last_version = (int) t_obj;
+                }
+                check_version_attempt_count = check_version_attempt_count - 1;
+            }
+            else
+            {
+                break;
+            }
+        }*/
+
+        /*if (cur_version < last_version) {
             showDialog("Вышла новая версия программы!\nНачать скачивание?");
-        }
+        }*/
     }
+
 
     @Override
     protected void onStart() {
@@ -168,7 +204,7 @@ public class MainActivity extends ScanActivity
         hideKeyboard();
     }
 
-    private void showDialog(String message) {
+    /*private void showDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
@@ -179,9 +215,9 @@ public class MainActivity extends ScanActivity
             dialog.dismiss();
         });
         builder.show();
-    }
+    }*/
 
-    private void startDownload() {
+    /*private void startDownload() {
         final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
         try {
             try {
@@ -194,5 +230,20 @@ public class MainActivity extends ScanActivity
                     Intent(Intent.ACTION_VIEW, Uri.parse("https://office2.ttmf.ru/ProgramLogs/api/TSDgetapk"));
             startActivity(browserIntent);
         }
-    }
+    }*/
+
+    /*@Override
+    public void onChanged(@Nullable Response response) {
+        switch (response.getStatus()) {
+            case ERROR:
+                break;
+            case SUCCESS:
+                hideKeyboard();
+                String version = (String) response.getObject();
+                break;
+            case LOADING:
+                break;
+        }
+    }*/
 }
+
