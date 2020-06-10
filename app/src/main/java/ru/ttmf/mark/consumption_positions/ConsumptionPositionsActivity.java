@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +24,9 @@ import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.Position;
-import ru.ttmf.mark.positions.ReverseSaveModel;
+import ru.ttmf.mark.positions.PositionsSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +41,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     private ConsumptionPositionsViewModel viewModel;
     private ProgressDialog progressDialog;
     private String Ean;
-    private List<ReverseSaveModel> scanPositions;
+    private List<PositionsSaveModel> scanPositions;
     private Integer totalCount;
     private Integer scannedCount;
     private Integer startCount;
@@ -192,12 +189,12 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                         checkEanSgtin(matrix);
                         positionsAdapter.addItem(matrix.SGTIN());
                         viewModel.addPositions(matrix.SGTIN());
-                        scanPositions.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                        scanPositions.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
                         scannedCount++;
                     } else {
                         positionsAdapter.addItem(matrix.SSCC());
                         viewModel.addPositions(matrix.SSCC());
-                        scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                        scanPositions.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
                         scannedCount++;
                     }
                 } else {
@@ -209,12 +206,12 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                     checkEanSgtin(matrix);
                     positionsAdapter.addItem(matrix.SGTIN());
                     viewModel.addPositions(matrix.SGTIN());
-                    scanPositions.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                    scanPositions.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
                     scannedCount++;
                 } else {
                     positionsAdapter.addItem(matrix.SSCC());
                     viewModel.addPositions(matrix.SSCC());
-                    scanPositions.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                    scanPositions.add(new PositionsSaveModel(matrix.SSCC(), "",1));
                     scannedCount++;
                 }
                 if (scannedCount == totalCount) {

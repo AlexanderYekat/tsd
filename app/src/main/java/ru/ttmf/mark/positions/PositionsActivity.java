@@ -4,21 +4,18 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.BidiFormatter;
+import android.text.InputType;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewDebug;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.squareup.okhttp.internal.framed.Variant;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.ScanActivity;
@@ -32,7 +29,6 @@ import ru.ttmf.mark.network.model.Position;
 import ru.ttmf.mark.preference.PreferenceController;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,7 +46,9 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private String TTN_TYPE;
     private String Ean;
     private Object savePosition;
-    private List<ReverseSaveModel> reverseDirectPosition;
+    private List<PositionsSaveModel> reverseDirectPosition;
+    private AlertDialog.Builder builder;
+    private String countBarcodes = "";
     @BindView(R.id.positions)
     RecyclerView rvPositions;
 
@@ -76,7 +74,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         String id = getIntent().getExtras().getString(ID);
         Ean = getIntent().getExtras().getString(EAN13);
         //totalPositions = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
-        reverseDirectPosition = new ArrayList<ReverseSaveModel>();
+        reverseDirectPosition = new ArrayList<PositionsSaveModel>();
         if (getIntent().getExtras() != null)
             viewModel.setDataType((DataType) getIntent().getSerializableExtra(DATA_TYPE));
 
@@ -92,6 +90,26 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         });
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
         totalPositionsTextView = (TextView) findViewById(R.id.totalPositions);
+
+
+        //Всплывающее окно с вводом количества сканируемых штрихкодов///
+        /*builder = new AlertDialog.Builder(this);
+        builder.setTitle("Введите количество:");
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText("1");
+        builder.setView(input);
+        // Set up the buttons
+        builder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                countBarcodes = input.getText().toString();
+            }
+        });
+        builder.show();*/
+        ///////////////////////////////////////////////////////////////
     }
 
     @Override
@@ -178,10 +196,10 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 scannedPositions++;
                 if (matrix.SGTIN() == null) {
                     positionsAdapter.removeItem(matrix.SSCC());
-                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
                 } else {
                     positionsAdapter.removeItem(matrix.SGTIN());
-                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
                 }
                 if (positionsAdapter.getItemCount() == 0) {
                     showSaveDialog(getString(R.string.scan_finish));
@@ -201,11 +219,11 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             if (checkPosition(posList, matrix)) {
                 if (matrix.SGTIN() == null) {
                     positionsAdapter.addItem(matrix.SSCC());
-                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",1));
                 } else {
                     checkEanSgtin(matrix);
                     positionsAdapter.addItem(matrix.SGTIN());
-                    reverseDirectPosition.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
                 }
                 scannedPositions++;
             } else {
@@ -215,10 +233,10 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             if (matrix.SSCC() == null) {
                 checkEanSgtin(matrix);
                 positionsAdapter.addItem(matrix.SGTIN());
-                reverseDirectPosition.add(new ReverseSaveModel(matrix.SGTIN(), code));
+                reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
             } else {
                 positionsAdapter.addItem(matrix.SSCC());
-                reverseDirectPosition.add(new ReverseSaveModel(matrix.SSCC(), ""));
+                reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",1 ));
             }
             if (positionsAdapter.getItemCount() == totalPositions) {
                 showSaveDialog(getString(R.string.scan_finish));

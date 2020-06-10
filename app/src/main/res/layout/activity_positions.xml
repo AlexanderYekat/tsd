@@ -42,7 +42,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cipher" />
+        app:layout_constraintTop_toBottomOf="@+id/cipher"/>
 
     <TextView
         android:id="@+id/totalPositions"
@@ -56,4 +56,6 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cipher" />
+
+
 </android.support.constraint.ConstraintLayout>

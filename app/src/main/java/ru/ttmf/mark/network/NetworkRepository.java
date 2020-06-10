@@ -1,6 +1,5 @@
 package ru.ttmf.mark.network;
 
-import android.app.AlertDialog;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.text.TextUtils;
@@ -14,7 +13,6 @@ import ru.ttmf.mark.network.model.BaseModel;
 import ru.ttmf.mark.network.model.BaseResponse;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.ConsumptionSearchData;
-import ru.ttmf.mark.network.model.Invoice;
 import ru.ttmf.mark.network.model.LoginModel;
 import ru.ttmf.mark.network.model.LoginResponse;
 import ru.ttmf.mark.network.model.PositionData;
@@ -39,7 +37,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.ttmf.mark.positions.ReverseSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class NetworkRepository {
