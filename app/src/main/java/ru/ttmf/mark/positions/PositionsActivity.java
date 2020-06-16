@@ -48,7 +48,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private Object savePosition;
     private List<PositionsSaveModel> reverseDirectPosition;
     private AlertDialog.Builder builder;
-    private String countBarcodes = "";
+    private Integer countBarcodes = 0;
     @BindView(R.id.positions)
     RecyclerView rvPositions;
 
@@ -92,22 +92,25 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         totalPositionsTextView = (TextView) findViewById(R.id.totalPositions);
 
 
-        //Всплывающее окно с вводом количества сканируемых штрихкодов///
-        /*builder = new AlertDialog.Builder(this);
+        /*//Всплывающее окно с вводом количества сканируемых штрихкодов///
+        builder = new AlertDialog.Builder(this);
         builder.setTitle("Введите количество:");
         // Set up the input
         final EditText input = new EditText(this);
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        input.setText("1");
+        countBarcodes = 1;
+        input.setText(countBarcodes.toString());
         builder.setView(input);
+
         // Set up the buttons
         builder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                countBarcodes = input.getText().toString();
+                countBarcodes =  Integer.parseInt(input.getText().toString());
             }
         });
+
         builder.show();*/
         ///////////////////////////////////////////////////////////////
     }
@@ -222,8 +225,30 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                     reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",1));
                 } else {
                     checkEanSgtin(matrix);
+
+                    countBarcodes = 1;
+                    //Всплывающее окно с вводом количества сканируемых штрихкодов///
+                    /*builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Введите количество:");
+
+                    final EditText input = new EditText(this);
+
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                    input.setText(countBarcodes.toString());
+                    builder.setView(input);
+
+                    builder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            countBarcodes =  Integer.parseInt(input.getText().toString());
+                        }
+                    });
+
+                    builder.show();*/
+                    ///////////////////////////////////////////////////////////////
+
                     positionsAdapter.addItem(matrix.SGTIN());
-                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code, countBarcodes));
                 }
                 scannedPositions++;
             } else {
@@ -232,11 +257,33 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         } else {
             if (matrix.SSCC() == null) {
                 checkEanSgtin(matrix);
+
+                countBarcodes = 1;
+                //Всплывающее окно с вводом количества сканируемых штрихкодов///
+                /*builder = new AlertDialog.Builder(this);
+                builder.setTitle("Введите количество:");
+
+                final EditText input = new EditText(this);
+
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                input.setText(countBarcodes.toString());
+                builder.setView(input);
+
+                builder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        countBarcodes =  Integer.parseInt(input.getText().toString());
+                    }
+                });
+
+                builder.show();*/
+                ///////////////////////////////////////////////////////////////
+
                 positionsAdapter.addItem(matrix.SGTIN());
                 reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
             } else {
                 positionsAdapter.addItem(matrix.SSCC());
-                reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",1 ));
+                reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",countBarcodes));
             }
             if (positionsAdapter.getItemCount() == totalPositions) {
                 showSaveDialog(getString(R.string.scan_finish));

@@ -180,6 +180,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
     private void Scan(List<String> posList, DataMatrix matrix, String code) {
         //если отсканированнные штрихкоды меньше всего штрихкодов, то продолжить сканирование
+        int old_scannedCount = scannedCount;
+
         if (scannedCount != totalCount) {
             //если кол-во отсканированных больше 0, то сохранять только уникальные SGTIN-ы
             if (posList.size() > 0) {
@@ -214,10 +216,14 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                     scanPositions.add(new PositionsSaveModel(matrix.SSCC(), "",1));
                     scannedCount++;
                 }
+            }
+
+            if (old_scannedCount != scannedCount) {
                 if (scannedCount == totalCount) {
                     showSaveDialog(getString(R.string.scan_finish));
                 }
             }
+
             updateScannedPositions();
         } else {
             return;
