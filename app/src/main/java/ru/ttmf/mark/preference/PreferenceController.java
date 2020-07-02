@@ -47,7 +47,7 @@ public class PreferenceController {
     }
 
     public Integer getVersion() {
-        return sharedPreferences.getInt(VERSION,120);
+        return sharedPreferences.getInt(VERSION,122);
     }
 
     public Integer getLastVersion() {

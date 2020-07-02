@@ -161,7 +161,23 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
             //если преобразование успешное, то продолжить
             if (matrix.SGTIN() != null || matrix.SSCC() != null) {
-                Scan(positionsAdapter.getItems(), matrix, code);
+
+                boolean find = false;
+
+                for (String s : viewModel.getValidPositions()) {
+                    if (s.equals(matrix.SGTIN())) {
+                        find = true;
+                        break;
+                    }
+                }
+
+                if (find == true) {
+                    Scan(positionsAdapter.getItems(), matrix, code);
+                }
+                else {
+                    ToastMessage("Штрихкод из другой партии!");
+                }
+
             } else {
                 ToastMessage("Некорректный штрихкод!");
             }
