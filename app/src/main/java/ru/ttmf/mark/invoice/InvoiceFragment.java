@@ -39,6 +39,7 @@ public class InvoiceFragment extends BaseFragment implements
     public static final String COUNT = "COUNT";
     public static final String EAN13 = "EAN13";
     public static final String SCAN_COUNT = "SCAN_COUNT";
+    public static final String SERIA = "SERIA";
 
     private static final String INVOICES = "invoices";
     private static final String CODE = "code";
@@ -107,6 +108,7 @@ public class InvoiceFragment extends BaseFragment implements
         intent.putExtra(ID, invoice.getId());
         intent.putExtra(COUNT, invoice.getCount());
         intent.putExtra(SCAN_COUNT, invoice.getScanCount());
+        intent.putExtra(SERIA, invoice.getSeria());
         intent.putExtra(EAN13, invoice.getEan13());
         intent.putExtra(NAME, getArguments().getString(CODE));
         intent.putExtra(DATA_TYPE, searchViewModel.getDataType());

@@ -33,13 +33,19 @@ public class Invoice implements Parcelable {
     @Expose
     private String scan_count;
 
-    public Invoice(String id, String cipher, String name, String count, String ean13, String scan_count) {
+    @SerializedName("seria")
+    @Expose
+    private String seria;
+
+
+    public Invoice(String id, String cipher, String name, String count, String ean13, String scan_count, String seria) {
         this.id = id;
         this.cipher = cipher;
         this.name = name;
         this.count = count;
         this.ean13 = ean13;
         this.scan_count = scan_count;
+        this.seria = seria;
     }
 
     protected Invoice(Parcel in) {
@@ -49,6 +55,7 @@ public class Invoice implements Parcelable {
         count = in.readString();
         ean13 = in.readString();
         scan_count = in.readString();
+        seria = in.readString();
     }
 
     @Override
@@ -59,7 +66,8 @@ public class Invoice implements Parcelable {
         dest.writeString(count);
         dest.writeString(ean13);
         dest.writeString(scan_count);
-    }
+        dest.writeString(seria);
+}
 
     @Override
     public int describeContents() {
@@ -106,14 +114,16 @@ public class Invoice implements Parcelable {
         return count;
     }
     public String getScanCount() { return scan_count; }
-    public String getEan13() {
-        return ean13;
-    }
+    public String getEan13() { return ean13; }
+    public String getSeria() { return seria; }
 
     public void setCount(String count) {
         this.count = count;
     }
     public void setScanCount(String scan_count) {
         this.scan_count = scan_count;
+    }
+    public void setSeria(String seria) {
+        this.seria = seria;
     }
 }

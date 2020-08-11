@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
     android:background="@android:color/white"
-    android:minHeight="100dp">
+    android:minHeight="120dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -30,28 +30,44 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:textColor="@android:color/black"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="2 уп" />
 
+        <TextView
+            android:id="@+id/seria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/id"
+            tools:text="seria" />
+
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:id="@+id/linearLayout"
+            android:layout_width="311dp"
+            android:layout_height="115dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:layout_editor_absoluteX="5dp">
 
             <TextView
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="8dp"
                 android:textColor="@android:color/black"
-                android:textSize="18sp"
+                android:textSize="17sp"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="fsdfsd" />
+
         </LinearLayout>
 
 

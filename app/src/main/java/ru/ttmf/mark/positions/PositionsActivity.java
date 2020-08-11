@@ -55,6 +55,9 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     @BindView(R.id.cipher)
     TextView cipher;
 
+    @BindView(R.id.seria)
+    TextView seria;
+
     PositionsAdapter positionsAdapter;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -71,6 +74,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         viewModel = ViewModelProviders.of(this)
                 .get(PositionsViewModel.class);
         String cipherText = getIntent().getExtras().getString(CIPHER);
+        String seriaText = getIntent().getExtras().getString(SERIA);
         String id = getIntent().getExtras().getString(ID);
         Ean = getIntent().getExtras().getString(EAN13);
         //totalPositions = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
@@ -81,6 +85,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         TTN_TYPE = getIntent().getExtras().getString("TTN_TYPE");
         viewModel.loadPositions(PreferenceController.getInstance().getToken(), id).observe(this, this);
         cipher.setText(getString(R.string.cipher, cipherText));
+        seria.setText(getString(R.string.seria, seriaText));
         IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
         intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
             @Override

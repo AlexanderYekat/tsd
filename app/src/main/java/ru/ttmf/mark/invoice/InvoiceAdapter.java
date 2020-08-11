@@ -57,6 +57,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
         //holder.count.setText(invoice.getCount() + " уп");
         //holder.id.setText(invoice.getId());
         holder.id.setText(invoice.getCipher());
+        holder.seria.setText(invoice.getSeria());
         holder.name.setText(invoice.getName());
     }
 
@@ -83,6 +84,8 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
         TextView name;
         @BindView(R.id.count)
         TextView count;
+        @BindView(R.id.seria)
+        TextView seria;
 
 
         public InvoiceData(View itemView) {
