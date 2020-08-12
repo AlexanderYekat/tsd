@@ -52,6 +52,9 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     @BindView(R.id.scanned)
     TextView scanned;
 
+    @BindView(R.id.seria)
+    TextView seria;
+
     TextView totalConsumptionPositionsTextView;
     ConsumptionPositionsAdapter positionsAdapter;
     @BindView(R.id.toolbar)
@@ -70,6 +73,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 .get(ConsumptionPositionsViewModel.class);
         Ean = getIntent().getExtras().getString(EAN13);
         String cipherText = getIntent().getExtras().getString(CIPHER);
+        String seriaText = getIntent().getExtras().getString(SERIA);
         String id = getIntent().getExtras().getString(ID);
         totalCount = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
         if (getIntent().getExtras() != null)
@@ -77,6 +81,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
         viewModel.searchPositions(PreferenceController.getInstance().getToken(), id).observe(this, this);
         scanned.setText(getString(R.string.cipher, cipherText));
+        seria.setText(getString(R.string.seria, seriaText));
         IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
         intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
             @Override
