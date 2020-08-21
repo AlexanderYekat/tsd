@@ -170,7 +170,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 boolean find = false;
 
                 for (String s : viewModel.getValidPositions()) {
-                    if (s.equals(matrix.SGTIN())) {
+                    if (s.equals(matrix.SGTIN()) || s.equals(matrix.SSCC())) {
                         find = true;
                         break;
                     }
