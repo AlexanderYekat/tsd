@@ -1,6 +1,6 @@
 <resources>
-    <string name="menu">Меню (версия 1.24)</string>
-    <!--Для увеличения версии: обновить строку выше + обновить в gradle + обновить в PreferenceController-->
+    <string name="menu">Меню (версия 1.25)</string>
+    <!--Для увеличения версии: обновить строку выше + обновить в gradle + обновить [cur_version] в PreferenceController-->
     <string name="app_name">Маркировка ТСД</string>
     <string name="userData">Имя пользователя</string>
     <string name="password">Пароль</string>
