@@ -22,7 +22,7 @@ public class PreferenceController {
     private static final String PASSWORD = "password";
     private static final String VERSION = "version";
     private static final String LAST_VERSION = "last_version";
-    private static final Integer cur_version = 126;
+    private static final Integer cur_version = 127;
 
     public static PreferenceController getInstance() {
         if (instance == null) {
