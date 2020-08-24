@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,9 @@ public class ScanSsccActivity extends ScanActivity {
 
     @BindView(R.id.btn_right)
     Button btn_right;
+
+    @BindView(R.id.ll_1_1)
+    LinearLayout ll_1_1;
 
     private int current_sscc_number;
     private List<Sscc_item> sscc_items_list;
@@ -110,7 +114,7 @@ public class ScanSsccActivity extends ScanActivity {
 
                 MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
                 try {
-                    BitMatrix bitMatrix = multiFormatWriter.encode(matrix.SSCC(), BarcodeFormat.CODE_128,300,120);
+                    BitMatrix bitMatrix = multiFormatWriter.encode("00" + matrix.SSCC(), BarcodeFormat.CODE_128, ll_1_1.getWidth(), 120);
                     BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                     Bitmap bitmap2 = barcodeEncoder.createBitmap(bitMatrix);
 
