@@ -1,5 +1,5 @@
 <resources>
-    <string name="menu">Меню (версия 1.25)</string>
+    <string name="menu">Меню (версия 1.26)</string>
     <!--Для увеличения версии: обновить строку выше + обновить в gradle + обновить [cur_version] в PreferenceController-->
     <string name="app_name">Маркировка ТСД</string>
     <string name="userData">Имя пользователя</string>
@@ -7,6 +7,7 @@
     <string name="enter">Вход</string>
     <string name="settings">Настройки</string>
     <string name="scan_sscc">отсканируйте SSCC</string>
+    <string name="scan_sscc2">Сканирование SSCC</string>
     <string name="mark_id">Идентификатор МД</string>
     <string name="mark_id_text_view">Идентификатор МД:</string>
     <string name="field_is_empty">Не оставляйте поле пустым</string>
@@ -34,6 +35,7 @@
     <string name="search_error2">Накладная с данным номером уже отсканирована</string>
     <string name="search_error3">Ничего не найдено!</string>
     <string name="inventory_in_dev">Функционал товарных запасов в разработке</string>
+    <string name="scan_sscc_in_dev">Функционал сканирования SSCC в разработке</string>
     <string name="unpack_in_dev">Функционал по расформированию SSCC в разработке</string>
     <string name="unpack_in_dev_ttmf">ТТМФ Функционал по расформированию SSCC в разработке</string>
     <string name="ttn">ТТН</string>
@@ -59,5 +61,8 @@
     <string name="already_scanned">Эта упаковка уже была отсканирована</string>
     <string name="wrong_package_specification">Неверная спецификация упаковки</string>
     <string name="remember_auth">Сохранять логин и пароль</string>
+    <string name="bnt_clear_text">Очистить</string>
+    <string name="bnt_left_text"><![CDATA[<]]><![CDATA[-]]></string>
+    <string name="bnt_right_text"><![CDATA[-]]><![CDATA[>]]></string>
 
 </resources>
