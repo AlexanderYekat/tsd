@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,7 +35,7 @@ import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.positions.PositionsAdapter;
-
+import ru.ttmf.mark.preference.PreferenceController;
 
 public class ScanSsccActivity extends ScanActivity {
 
@@ -62,8 +63,8 @@ public class ScanSsccActivity extends ScanActivity {
     @BindView(R.id.ll_1_1)
     LinearLayout ll_1_1;
 
+    private float current_screenBrightness;
     private int current_sscc_number;
-    private List<Sscc_item> sscc_items_list;
     private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
 
     @Override
@@ -83,8 +84,15 @@ public class ScanSsccActivity extends ScanActivity {
         });
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
 
-        sscc_items_list = new ArrayList<Sscc_item>();
         current_sscc_number = 0;
+
+        if (PreferenceController.getInstance().sscc_items_list.size() > 0)
+        {
+            textView_count.setText("1/" + PreferenceController.getInstance().sscc_items_list.size());
+            textView1.setText(PreferenceController.getInstance().sscc_items_list.get(0).sscc);
+            imageView.setImageBitmap(PreferenceController.getInstance().sscc_items_list.get(0).bitmap);
+            current_sscc_number = 1;
+        }
     }
 
     public void initToolbar(Toolbar toolbar, String title) {
@@ -119,7 +127,7 @@ public class ScanSsccActivity extends ScanActivity {
                     Bitmap bitmap2 = barcodeEncoder.createBitmap(bitMatrix);
 
                     boolean find = false;
-                    for (Sscc_item var : sscc_items_list)
+                    for (Sscc_item var : PreferenceController.getInstance().sscc_items_list)
                     {
                         if (var.sscc.equals(matrix.SSCC()))
                         {
@@ -134,12 +142,12 @@ public class ScanSsccActivity extends ScanActivity {
                         Sscc_item tmp_item = new Sscc_item();
                         textView1.setText(matrix.SSCC());
                         tmp_item.sscc = matrix.SSCC();
-                        sscc_items_list.add(tmp_item);
-                        tmp_item.number = sscc_items_list.size();
+                        PreferenceController.getInstance().sscc_items_list.add(tmp_item);
+                        tmp_item.number = PreferenceController.getInstance().sscc_items_list.size();
                         tmp_item.bitmap = bitmap2;
-                        textView_count.setText(sscc_items_list.size() + "/" + sscc_items_list.size());
+                        textView_count.setText(PreferenceController.getInstance().sscc_items_list.size() + "/" + PreferenceController.getInstance().sscc_items_list.size());
                         imageView.setImageBitmap(bitmap2);
-                        current_sscc_number = sscc_items_list.size();
+                        current_sscc_number = PreferenceController.getInstance().sscc_items_list.size();
                     }
                 } catch (WriterException e) {
                     e.printStackTrace();
@@ -174,7 +182,7 @@ public class ScanSsccActivity extends ScanActivity {
     public void onbtn_clearyClick() {
         textView_count.setText("0/0");
         textView1.setText("");
-        sscc_items_list.clear();
+        PreferenceController.getInstance().sscc_items_list.clear();
         imageView.setImageResource(android.R.color.transparent);
     }
 
@@ -182,19 +190,19 @@ public class ScanSsccActivity extends ScanActivity {
     public void onbtn_leftClick() {
         if (current_sscc_number > 1) {
             current_sscc_number = current_sscc_number - 1;
-            textView_count.setText(current_sscc_number + "/" + sscc_items_list.size());
-            textView1.setText(sscc_items_list.get(current_sscc_number - 1).sscc);
-            imageView.setImageBitmap(sscc_items_list.get(current_sscc_number - 1).bitmap);
+            textView_count.setText(current_sscc_number + "/" + PreferenceController.getInstance().sscc_items_list.size());
+            textView1.setText(PreferenceController.getInstance().sscc_items_list.get(current_sscc_number - 1).sscc);
+            imageView.setImageBitmap(PreferenceController.getInstance().sscc_items_list.get(current_sscc_number - 1).bitmap);
         }
     }
 
     @OnClick(R.id.btn_right)
     public void onbtn_rightClick() {
-        if (current_sscc_number < sscc_items_list.size()) {
+        if (current_sscc_number < PreferenceController.getInstance().sscc_items_list.size()) {
             current_sscc_number = current_sscc_number + 1;
-            textView_count.setText(current_sscc_number + "/" + sscc_items_list.size());
-            textView1.setText(sscc_items_list.get(current_sscc_number - 1).sscc);
-            imageView.setImageBitmap(sscc_items_list.get(current_sscc_number - 1).bitmap);
+            textView_count.setText(current_sscc_number + "/" + PreferenceController.getInstance().sscc_items_list.size());
+            textView1.setText(PreferenceController.getInstance().sscc_items_list.get(current_sscc_number - 1).sscc);
+            imageView.setImageBitmap(PreferenceController.getInstance().sscc_items_list.get(current_sscc_number - 1).bitmap);
         }
     }
 }

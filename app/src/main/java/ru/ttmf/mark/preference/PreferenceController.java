@@ -3,11 +3,13 @@ package ru.ttmf.mark.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.TlsVersion;
 import ru.ttmf.mark.R;
+import ru.ttmf.mark.scan_sscc.Sscc_item;
 
 public class PreferenceController {
     private static PreferenceController instance;
@@ -23,6 +25,8 @@ public class PreferenceController {
     private static final String VERSION = "version";
     private static final String LAST_VERSION = "last_version";
     private static final Integer cur_version = 127;
+
+    public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
 
     public static PreferenceController getInstance() {
         if (instance == null) {
@@ -120,5 +124,6 @@ public class PreferenceController {
         setUserId("");
         setUserName("");
         setToken("");
+        sscc_items_list.clear();
     }
 }
