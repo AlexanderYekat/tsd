@@ -33,4 +33,7 @@ public interface ApiService {
 
     @POST(".")
     Call<String> version(@Body int version);
+
+    @POST(".")
+    Call<LoginResponse> send_device_info(@Body BaseModel device_info);
 }

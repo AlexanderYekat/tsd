@@ -1,19 +1,25 @@
 package ru.ttmf.mark.login;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import ru.ttmf.mark.DeviceInfo.DeviceInfoViewModel;
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.home.HomeFragment;
 import ru.ttmf.mark.common.BaseFragment;
@@ -35,6 +41,7 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
     TextInputEditText userField;
 
     LoginViewModel viewModel;
+    DeviceInfoViewModel devInfoviewModel;
 
     @Override
     protected int getLayoutId() {
@@ -47,6 +54,8 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         viewModel = ViewModelProviders.of(this)
                 .get(LoginViewModel.class);
+        devInfoviewModel = ViewModelProviders.of(this)
+                .get(DeviceInfoViewModel.class);
         return view;
     }
 
@@ -57,6 +66,7 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
         passwordField.setText(PreferenceController.getInstance().getPassword());
     }
 
+    @SuppressLint("MissingPermission")
     @OnClick(R.id.login)
     public void login() {
         hideKeyboard();
@@ -68,10 +78,28 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
             showDialog("Версия программы не является актуальной!");
         }
 
+        String cur_serial = "";
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cur_serial = Build.getSerial();
+            }
+            else
+            {
+                cur_serial = Build.SERIAL;
+            }
+        }
+        catch (Exception ex) {
+            cur_serial = "indefined";
+        }
+
+        PreferenceController.getInstance().setSerial(cur_serial);
+
         viewModel.login(
                 userField.getText().toString(),
                 this.hasGet(passwordField.getText().toString()))
                 .observe(this, this::onChanged);
+
+        devInfoviewModel.send_device_info(cur_serial, cur_version, userField.getText().toString());
     }
 
     private void showDialog(String message) {

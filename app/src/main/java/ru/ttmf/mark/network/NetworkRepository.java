@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.text.TextUtils;
 import android.util.Log;
 
+import ru.ttmf.mark.DeviceInfo.DeviceInfoModel;
 import ru.ttmf.mark.common.NetworkStatus;
 import ru.ttmf.mark.common.QueryType;
 import ru.ttmf.mark.common.Response;
@@ -164,7 +165,39 @@ public class NetworkRepository {
         return liveData;
     }
 
+    public LiveData<Response> send_device_info(String cur_serial, Integer cur_version, String login) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.Device_info, NetworkStatus.LOADING));
+        apiService.send_device_info(new BaseModel("TSD_DEVICE_INFO", new DeviceInfoModel(cur_serial, cur_version, login))).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, retrofit2.Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getData(), QueryType.Device_info, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.Device_info,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.Device_info,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.Device_info,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
 
     public LiveData<Response> login(String login, String password) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();

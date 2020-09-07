@@ -23,8 +23,10 @@ public class PreferenceController {
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
     private static final String VERSION = "version";
+    private static final String SERIAL = "serial";
     private static final String LAST_VERSION = "last_version";
-    private static final Integer cur_version = 127;
+    private static final String cur_serial = "cur_serial";
+    private static final Integer cur_version = 128;
 
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
 
@@ -55,6 +57,10 @@ public class PreferenceController {
         return sharedPreferences.getInt(VERSION, cur_version);
     }
 
+    public String getSerial() {
+        return sharedPreferences.getString(SERIAL, cur_serial);
+    }
+
     public Integer getLastVersion() {
         return sharedPreferences.getInt(LAST_VERSION,0);
     }
@@ -81,6 +87,10 @@ public class PreferenceController {
 
     public void setVersion(Integer version) {
         sharedPreferences.edit().putInt(VERSION, version).apply();
+    }
+
+    public void setSerial(String cur_serial) {
+        sharedPreferences.edit().putString(SERIAL, cur_serial).apply();
     }
 
     public void setLastVersion(Integer last_version) {
