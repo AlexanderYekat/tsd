@@ -7,7 +7,6 @@ public class LoginResponse extends BaseResponse{
     @SerializedName("Data")
     private UserData data;
 
-
     public Object getData() {
         return data;
     }
