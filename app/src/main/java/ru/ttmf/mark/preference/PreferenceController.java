@@ -26,7 +26,7 @@ public class PreferenceController {
     private static final String SERIAL = "serial";
     private static final String LAST_VERSION = "last_version";
     private static final String cur_serial = "cur_serial";
-    private static final Integer cur_version = 128;
+    private static final Integer cur_version = 129;
 
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
 
