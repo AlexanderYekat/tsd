@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.common.BaseFragment;
@@ -79,6 +80,11 @@ public class SearchFragment extends BaseFragment implements Observer<Response> {
     public void onResume() {
         super.onResume();
         code.setOnEditorActionListener(listener);
+        if (PreferenceController.getInstance().getNotFinish()) {
+            Toast toast = Toast.makeText(getContext(), "Отсканированы не все позиции!", Toast.LENGTH_LONG);
+            toast.show();
+            PreferenceController.getInstance().setNotFinish(false);
+        }
     }
 
 

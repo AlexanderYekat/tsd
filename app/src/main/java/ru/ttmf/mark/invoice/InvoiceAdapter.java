@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.network.model.Invoice;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.ttmf.mark.preference.PreferenceController;
 
 public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceData> {
 
@@ -47,11 +49,21 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
 
         if (temp_count_double % 1 > 0) {
             holder.count.setText("(" + temp_scan_count + " из "+ temp_count_double + " уп)");
+
+            if (temp_scan_count < temp_count_double)
+            {
+                PreferenceController.getInstance().setNotFinish(true);
+            }
         }
         else
         {
             temp_count_int = (int) temp_count_double;
             holder.count.setText("(" + temp_scan_count + " из "+ temp_count_int + " уп)");
+
+            if (temp_scan_count < temp_count_int)
+            {
+                PreferenceController.getInstance().setNotFinish(true);
+            }
         }
 
         //holder.count.setText(invoice.getCount() + " уп");
