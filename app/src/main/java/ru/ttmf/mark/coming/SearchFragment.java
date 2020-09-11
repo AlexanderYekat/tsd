@@ -85,6 +85,12 @@ public class SearchFragment extends BaseFragment implements Observer<Response> {
             toast.show();
             PreferenceController.getInstance().setNotFinish(false);
         }
+
+        if (PreferenceController.getInstance().getUnScanned()) {
+            Toast toast = Toast.makeText(getContext(), "Для шифра превышено количество!", Toast.LENGTH_LONG);
+            toast.show();
+            PreferenceController.getInstance().setUnScanned(false);
+        }
     }
 
 

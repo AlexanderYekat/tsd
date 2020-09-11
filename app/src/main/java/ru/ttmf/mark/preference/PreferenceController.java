@@ -24,10 +24,12 @@ public class PreferenceController {
     private static final String PASSWORD = "password";
     private static final String VERSION = "version";
     private static final String NOT_FINISH = "not_finish";
+    private static final String UNNECESSARY_SCANNED = "unnecessary_scanned";
     private static final String SERIAL = "serial";
     private static final String LAST_VERSION = "last_version";
     private static final String cur_serial = "cur_serial";
     private static final Boolean not_finish = false;
+    private static final Boolean unnecessary_scanned = false;
     private static final Integer cur_version = 130;
 
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
@@ -69,6 +71,8 @@ public class PreferenceController {
 
     public Boolean getNotFinish() { return sharedPreferences.getBoolean(NOT_FINISH, not_finish); }
 
+    public Boolean getUnScanned() { return sharedPreferences.getBoolean(UNNECESSARY_SCANNED, unnecessary_scanned); }
+
     public String getUrl() {
         return sharedPreferences.getString(URL, "https://med.ttmf.ru/mark/api/mark/");
     }
@@ -103,6 +107,10 @@ public class PreferenceController {
 
     public void setNotFinish(Boolean value) {
         sharedPreferences.edit().putBoolean(NOT_FINISH, value).apply();
+    }
+
+    public void setUnScanned(Boolean value) {
+        sharedPreferences.edit().putBoolean(UNNECESSARY_SCANNED, value).apply();
     }
 
     public void setUrl(String url) {

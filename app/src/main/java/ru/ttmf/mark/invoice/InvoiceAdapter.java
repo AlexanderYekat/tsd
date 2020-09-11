@@ -51,9 +51,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
             holder.count.setText("(" + temp_scan_count + " из "+ temp_count_double + " уп)");
 
             if (temp_scan_count < temp_count_double)
-            {
-                PreferenceController.getInstance().setNotFinish(true);
-            }
+            { PreferenceController.getInstance().setNotFinish(true); }
+
+            if (temp_scan_count > temp_count_double)
+            { PreferenceController.getInstance().setUnScanned(true); }
+
         }
         else
         {
@@ -61,9 +63,10 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
             holder.count.setText("(" + temp_scan_count + " из "+ temp_count_int + " уп)");
 
             if (temp_scan_count < temp_count_int)
-            {
-                PreferenceController.getInstance().setNotFinish(true);
-            }
+            { PreferenceController.getInstance().setNotFinish(true); }
+
+            if (temp_scan_count > temp_count_int)
+            { PreferenceController.getInstance().setUnScanned(true); }
         }
 
         //holder.count.setText(invoice.getCount() + " уп");
