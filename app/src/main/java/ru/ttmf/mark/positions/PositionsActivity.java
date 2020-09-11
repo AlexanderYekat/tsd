@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -172,6 +173,20 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         rvPositions.setAdapter(positionsAdapter);
     }
 
+    private void playSound(int resId){
+        MediaPlayer mp = MediaPlayer.create(this, resId);
+        mp.setVolume(1, 1);
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        });
+        mp.start();
+    }
+
     private void successfulScan(String code) {
         DataMatrix matrix = new DataMatrix();
         try {
@@ -188,6 +203,9 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Некорректный штрихкод!", Toast.LENGTH_SHORT);
             toast.show();
+
+            playSound(R.raw.s3);
+
             return;
         }
     }
@@ -217,6 +235,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
         if (start_count == scannedPositions) {
             toast.show();
+            playSound(R.raw.s3);
         }
 
         updateScannedPositions();
@@ -306,6 +325,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "Штрих-код уже был просканирован!", Toast.LENGTH_SHORT);
                 toast.show();
+                playSound(R.raw.s3);
                 break;
             } else {
                 check = true;
@@ -322,6 +342,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "EAN-13 не совпадает!", Toast.LENGTH_LONG);
                 toast.show();
+                playSound(R.raw.s3);
                 errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
             }
         }
