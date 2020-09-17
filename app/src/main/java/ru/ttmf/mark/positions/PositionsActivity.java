@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,9 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +28,7 @@ import ru.ttmf.mark.preference.PreferenceController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -280,10 +278,9 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             }
         } else {
             if (matrix.SSCC() == null) {
-                checkEanSgtin(matrix);
-
-                countBarcodes = 1;
-                //Всплывающее окно с вводом количества сканируемых штрихкодов///
+                if (checkEanSgtin(matrix) == false) {
+                    countBarcodes = 1;
+                    //Всплывающее окно с вводом количества сканируемых штрихкодов///
                 /*builder = new AlertDialog.Builder(this);
                 builder.setTitle("Введите количество:");
 
@@ -301,13 +298,18 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 });
 
                 builder.show();*/
-                ///////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////
 
-                positionsAdapter.addItem(matrix.SGTIN());
-                reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
+                    if (matrix.SGTIN().length() == 27) {
+                        positionsAdapter.addItem(matrix.SGTIN());
+                        reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
+                    }
+                }
             } else {
-                positionsAdapter.addItem(matrix.SSCC());
-                reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",countBarcodes));
+                if (matrix.SSCC().length() == 18) {
+                    positionsAdapter.addItem(matrix.SSCC());
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",countBarcodes));
+                }
             }
             if (positionsAdapter.getItemCount() == totalPositions) {
                 showSaveDialog(getString(R.string.scan_finish));
@@ -334,18 +336,22 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         return check;
     }
 
-    private void checkEanSgtin(DataMatrix matrix) {
+    private boolean checkEanSgtin(DataMatrix matrix) {
         if (Ean != null) {
             if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean) && Ean.equals(matrix.EAN())) {
-                return;
+                return false;
             } else {
                 Toast toast = Toast.makeText(getApplicationContext(),
                         "EAN-13 не совпадает!", Toast.LENGTH_LONG);
                 toast.show();
                 playSound(R.raw.s3);
-                errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
+                AtomicReference<Boolean> rez;
+                rez = errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
+
+                return rez.get();
             }
         }
+        return false;
     }
 
     private void updateScannedPositions() {
@@ -387,19 +393,24 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 .observe(this, this);
     }
 
-    private void errorSgtinEanDialog(String message, String sgtin) {
+    private AtomicReference<Boolean> errorSgtinEanDialog(String message, String sgtin) {
+        AtomicReference<Boolean> rez = new AtomicReference<>(false);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            rez.set(true);
             dialog.dismiss();
             positionsAdapter.removeItem(sgtin);
             scannedPositions--;
             updateScannedPositions();
         });
         builder.setNegativeButton(R.string.no, (dialog, which) -> {
+            rez.set(false);
             dialog.dismiss();
         });
         builder.show();
+
+        return rez;
     }
 
     private void showSaveDialog(String message) {
