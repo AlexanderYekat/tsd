@@ -221,7 +221,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         //если количество отсканированнных штрихкодов меньше необходимого количества, то продолжить сканирование
         int old_scannedCount = scannedCount;
 
-        if (scannedCount <= totalCount) {
+        if (scannedCount < totalCount) {
             //если кол-во отсканированных больше 0, то сохранять только уникальные SGTIN-ы
             if (posList.size() > 0) {
                 if (checkPosition(posList, matrix)) {
