@@ -31,7 +31,7 @@ public class PreferenceController {
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
     private static final Integer cur_version = 133;
-
+    //test
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
 
     public static PreferenceController getInstance() {
