@@ -275,7 +275,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             } else {
                 if (matrix.SSCC() == null) {
                     //проверка на ean-code
-                    checkEanSgtin(matrix);
+                    //checkEanSgtin(matrix);
                     positionsAdapter.addItem(matrix.SGTIN());
                     viewModel.addPositions(matrix.SGTIN());
                     scanPositions.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
