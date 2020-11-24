@@ -275,7 +275,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             } else {
                 if (matrix.SSCC() == null) {
                     //проверка на ean-code
-                    //checkEanSgtin(matrix);
+                    checkEanSgtin(matrix);
                     positionsAdapter.addItem(matrix.SGTIN());
                     viewModel.addPositions(matrix.SGTIN());
                     scanPositions.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
@@ -331,14 +331,14 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
                 playSound(R.raw.s3);
 
-                errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
+                errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN(), matrix.EAN());
             }
         } else {
             Ean = matrix.EAN();
         }
     }
 
-    private void errorSgtinEanDialog(String message, String sgtin) {
+    private void errorSgtinEanDialog(String message, String sgtin, String ean) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
@@ -349,6 +349,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         });
         builder.setNegativeButton(R.string.no, (dialog, which) -> {
             dialog.dismiss();
+            Ean = ean;
         });
         builder.show();
     }
