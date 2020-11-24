@@ -7,6 +7,7 @@ import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.NetworkRepository;
 import ru.ttmf.mark.network.model.Position;
+import ru.ttmf.mark.network.model.SgtinInfo;
 
 import java.util.List;
 
@@ -15,10 +16,9 @@ public class PositionsViewModel extends ViewModel {
 
     private DataType dataType;
 
-    public LiveData<Response> loadPositions (String token, String cipher) {
+    public LiveData<Response> loadPositions(String token, String cipher) {
         return NetworkRepository.getInstance().getPositions(dataType, token, cipher);
     }
-
 
     public LiveData<Response> savePositions(String token,
                                             String userId,
@@ -39,5 +39,13 @@ public class PositionsViewModel extends ViewModel {
 
     public void setDataType(DataType dataType) {
         this.dataType = dataType;
+    }
+
+    public LiveData<Response> getSgtinInfo(String token, String sgtin, Integer operationType) {
+        return NetworkRepository.getInstance().getSgtinInfo(token, sgtin, operationType);
+    }
+
+    public LiveData<Response> getSsccInfo(String token, String sscc, Integer operationType) {
+        return NetworkRepository.getInstance().getSsccInfo(token, sscc, operationType);
     }
 }

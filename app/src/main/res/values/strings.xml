@@ -1,5 +1,5 @@
 <resources>
-    <string name="menu">Меню (версия 1.34)</string>
+    <string name="menu">Меню (версия 1.35)</string>
     <!--Для увеличения версии: обновить строку выше + обновить в gradle + обновить [cur_version] в PreferenceController-->
     <string name="app_name">Маркировка ТСД</string>
     <string name="userData">Имя пользователя</string>
@@ -38,6 +38,7 @@
     <string name="scan_sscc_in_dev">Функционал сканирования SSCC в разработке</string>
     <string name="unpack_in_dev">Функционал по расформированию SSCC в разработке</string>
     <string name="unpack_in_dev_ttmf">ТТМФ Функционал по расформированию SSCC в разработке</string>
+    <string name="sgtin_sscc_info_in_dev">Функционал подробной информации по штрихкоду в разработке</string>
     <string name="ttn">ТТН</string>
     <string name="positions">Позиции</string>
     <string name="cipher">Шифр: %s</string>
@@ -64,5 +65,6 @@
     <string name="bnt_clear_text">Очистить</string>
     <string name="bnt_left_text"><![CDATA[<]]><![CDATA[-]]></string>
     <string name="bnt_right_text"><![CDATA[-]]><![CDATA[>]]></string>
+    <string name="barcode_info">Информация по штрихкоду</string>
 
 </resources>

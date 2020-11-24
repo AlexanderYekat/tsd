@@ -1,15 +1,19 @@
 package ru.ttmf.mark.network;
 
+import java.util.List;
+
 import ru.ttmf.mark.network.model.BaseModel;
 import ru.ttmf.mark.network.model.BaseResponse;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.LoginResponse;
 import ru.ttmf.mark.network.model.PositionsResponse;
 import ru.ttmf.mark.network.model.SearchResponse;
+import ru.ttmf.mark.network.model.SgtinInfoResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import ru.ttmf.mark.network.model.SsccInfoResponse;
 
 public interface ApiService {
 
@@ -36,4 +40,10 @@ public interface ApiService {
 
     @POST(".")
     Call<LoginResponse> send_device_info(@Body BaseModel device_info);
+
+    @POST(".")
+    Call<SgtinInfoResponse> getSgtinInfo(@Body BaseModel sgtinInfo);
+
+    @POST(".")
+    Call<SsccInfoResponse> getSsccInfo(@Body BaseModel ssccInfo);
 }

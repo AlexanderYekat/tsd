@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ru.ttmf.mark.R;
+import ru.ttmf.mark.barcode_info.BarcodeInfoActivity;
 import ru.ttmf.mark.coming.DirectReversePositions;
 import ru.ttmf.mark.scan_sscc.ScanSscc;
 import ru.ttmf.mark.coming.SearchFragment;
@@ -55,6 +56,15 @@ public class HomeFragment extends BaseFragment {
 
         Intent intent = new Intent(getContext(), ScanSsccActivity.class);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.barcode_info)
+    public void onBarcodeInfoClick() {
+        Toast.makeText(getContext(), R.string.sgtin_sscc_info_in_dev, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), R.string.scan_sscc_in_dev, Toast.LENGTH_SHORT).show();
+
+        //Intent intent = new Intent(getContext(), BarcodeInfoActivity.class);
+        //startActivity(intent);
     }
 
 }

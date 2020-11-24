@@ -24,6 +24,8 @@ import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.Position;
+import ru.ttmf.mark.network.model.SgtinInfo;
+import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.preference.PreferenceController;
 
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private List<PositionsSaveModel> reverseDirectPosition;
     private AlertDialog.Builder builder;
     private Integer countBarcodes = 0;
+
     @BindView(R.id.positions)
     RecyclerView rvPositions;
 
@@ -159,6 +162,35 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                         hideProgressDialog();
                         finish();
                         break;
+                    case GetSgtinInfo:
+                        hideProgressDialog();
+                        List<SgtinInfo> sgtinInfoList = (List<SgtinInfo>) response.getObject();
+                        //viewModel.setSgtinInfo(sgtinInfoList);
+                        if (sgtinInfoList.size() > 0) {
+                            showErrorBarcodeInfo("Номер документа: " + sgtinInfoList.get(0).getTtnId() + "\n" +
+                                    "Дата документа: " + sgtinInfoList.get(0).getTtnDate() + "\n" +
+                                    "Наименование склада: " + sgtinInfoList.get(0).getSkladName() + "\n" +
+                                    "PartyId: " + sgtinInfoList.get(0).getParty() + "\n" +
+                                    "Шифр: " + sgtinInfoList.get(0).getShifr() + "\n" +
+                                    "SGTIN: " + sgtinInfoList.get(0).getSgtin() + "\n" +
+                                    "SSCC: " + sgtinInfoList.get(0).getSscc() + "\n" +
+                                    "Статус скаинирования: " + sgtinInfoList.get(0).getTsdNaim() + "\n" +
+                                    "Статус акцептования: " + sgtinInfoList.get(0).getAcceptNaim() + "\n" +
+                                    "Статус товара: " + sgtinInfoList.get(0).getOstNaim() + "\n" +
+                                    "Тип акцептования: " + sgtinInfoList.get(0).getMarkAcceptTypeNaim() + "\n");
+                        }
+                        break;
+                    case GetSsccInfo:
+                        hideProgressDialog();
+                        List<SsccInfo> ssccInfoList = (List<SsccInfo>) response.getObject();
+                        if (ssccInfoList.size() > 0) {
+                            showErrorBarcodeInfo("Номер документа: " + ssccInfoList.get(0).getUnpDocId() + "\n" +
+                                    "SSCC: " + ssccInfoList.get(0).getSscc() + "\n" +
+                                    "Дата документа: " + ssccInfoList.get(0).getUnpDate() + "\n" +
+                                    "Вид операции: " + ssccInfoList.get(0).getAction() + "\n" +
+                                    "Статус операции: " + ssccInfoList.get(0).getRezult() + "\n");
+                            break;
+                        }
                 }
                 break;
         }
@@ -171,7 +203,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         rvPositions.setAdapter(positionsAdapter);
     }
 
-    private void playSound(int resId){
+    private void playSound(int resId) {
         MediaPlayer mp = MediaPlayer.create(this, resId);
         mp.setVolume(1, 1);
 
@@ -234,17 +266,19 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         if (start_count == scannedPositions) {
             toast.show();
             playSound(R.raw.s3);
+            GetSgtinSsccInfo(matrix);
         }
 
         updateScannedPositions();
     }
+
 
     private void ReverseScan(List<Position> posList, DataMatrix matrix, String code) {
         if (posList.size() > 0) {
             if (checkPosition(posList, matrix)) {
                 if (matrix.SGTIN() == null) {
                     positionsAdapter.addItem(matrix.SSCC());
-                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",1));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
                 } else {
                     checkEanSgtin(matrix);
 
@@ -302,13 +336,13 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
                     if (matrix.SGTIN().length() == 27) {
                         positionsAdapter.addItem(matrix.SGTIN());
-                        reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
+                        reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
                     }
                 }
             } else {
                 if (matrix.SSCC().length() == 18) {
                     positionsAdapter.addItem(matrix.SSCC());
-                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "",countBarcodes));
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "", countBarcodes));
                 }
             }
             if (positionsAdapter.getItemCount() == totalPositions) {
@@ -478,5 +512,24 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         });
         builder.show();
 
+    }
+
+    protected void showErrorBarcodeInfo(String text) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(text);
+        builder.setTitle(R.string.barcode_info);
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.show();
+    }
+
+    //Получение информации по SGTIN-у или SSCC
+    private void GetSgtinSsccInfo(DataMatrix matrix) {
+        if (matrix.SSCC() == null) {
+            viewModel.getSgtinInfo(PreferenceController.getInstance().getToken(), matrix.SGTIN(), 1).observe(this, this);
+        } else {
+            viewModel.getSsccInfo(PreferenceController.getInstance().getToken(), matrix.SSCC(), 2).observe(this, this);
+        }
     }
 }

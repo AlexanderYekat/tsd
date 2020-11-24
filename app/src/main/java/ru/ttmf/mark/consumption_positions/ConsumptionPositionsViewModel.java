@@ -65,4 +65,12 @@ public class ConsumptionPositionsViewModel extends ViewModel {
     public void setDataType(DataType dataType) {
         this.dataType = dataType;
     }
+
+    public LiveData<Response> getSgtinInfo(String token, String sgtin, Integer operationType) {
+        return NetworkRepository.getInstance().getSgtinInfo(token, sgtin, operationType);
+    }
+
+    public LiveData<Response> getSsccInfo(String token, String sscc, Integer operationType) {
+        return NetworkRepository.getInstance().getSsccInfo(token, sscc, operationType);
+    }
 }

@@ -2,6 +2,7 @@ package ru.ttmf.mark.network;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,6 +24,10 @@ import ru.ttmf.mark.network.model.SavePositionsData;
 import ru.ttmf.mark.network.model.SearchData;
 import ru.ttmf.mark.network.model.SearchResponse;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -39,10 +44,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.ttmf.mark.network.model.SgtinInfoResponse;
+import ru.ttmf.mark.network.model.SgtinSsccData;
+import ru.ttmf.mark.network.model.SsccInfoResponse;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class NetworkRepository {
     private static NetworkRepository instance;
+    private static Context context;
     private ApiService apiService;
     private ApiService officeApiService;
 
@@ -67,19 +76,43 @@ public class NetworkRepository {
 
     public OkHttpClient createHttpClient() {
 
+        try{
+
         HttpLoggingInterceptor interceptor =
                 new HttpLoggingInterceptor(message -> Log.d("REST", message));
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(120, TimeUnit.SECONDS)
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(500, TimeUnit.SECONDS)
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .addInterceptor(interceptor)
                 .hostnameVerifier((hostname, session) -> true);
 
         return enableTls(client).build();
+        }
+        catch (Exception ex){
+         return null;
+        }
+
+    }
+
+    public static String[] getProxyDetails(Context context) {
+        String[] proxyAddress = new String[2];
+        try {
+            proxyAddress[0] = System.getProperty("http.proxyHost");
+            proxyAddress[1] = ":" + System.getProperty("http.proxyPort");
+
+            if (proxyAddress[0] != null && proxyAddress[1] != null) {
+                return proxyAddress;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            //ignore
+        }
+        return null;
     }
 
     private static OkHttpClient.Builder enableTls(OkHttpClient.Builder client) {
@@ -124,6 +157,18 @@ public class NetworkRepository {
         return client;
     }
 
+    public static NetworkRepository getInstance(Context _context) {
+        if (instance == null) {
+            synchronized (NetworkRepository.class) {
+                if (instance == null) {
+                    instance = new NetworkRepository();
+                    context = _context;
+                }
+            }
+        }
+        return instance;
+    }
+
     public static NetworkRepository getInstance() {
         if (instance == null) {
             synchronized (NetworkRepository.class) {
@@ -151,12 +196,13 @@ public class NetworkRepository {
                     int last_version = 0;
                     String t_obj = response.body();
                     if (t_obj != null) {
-                        last_version =  Integer.parseInt(t_obj);
+                        last_version = Integer.parseInt(t_obj);
                     }
 
                     PreferenceController.getInstance().setLastVersion(last_version);
                 }
             }
+
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 liveData.postValue(new Response(
@@ -230,7 +276,7 @@ public class NetworkRepository {
                 liveData.postValue(new Response(
                         QueryType.Login,
                         NetworkStatus.ERROR,
-                        "INTERNET ERROR"));
+                        t.getMessage()));
             }
         });
         return liveData;
@@ -420,7 +466,7 @@ public class NetworkRepository {
                         liveData.postValue(new Response(
                                 QueryType.GetConsumptionPositions,
                                 NetworkStatus.ERROR,
-                                "INTERNET ERROR"));
+                                t.getMessage()));
                     }
                 });
         return liveData;
@@ -461,6 +507,73 @@ public class NetworkRepository {
                     }
                 });
         return liveData;
+    }
 
+    public LiveData<Response> getSgtinInfo(String token, String sgtin, Integer operationType) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetSgtinInfo, NetworkStatus.LOADING));
+        apiService.getSgtinInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, sgtin, null, operationType))).enqueue(new Callback<SgtinInfoResponse>() {
+            @Override
+            public void onResponse(Call<SgtinInfoResponse> call, retrofit2.Response<SgtinInfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getSgtinInfo(), QueryType.GetSgtinInfo, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.GetSgtinInfo,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.GetSgtinInfo,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SgtinInfoResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetSgtinInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<Response> getSsccInfo(String token, String sscc, Integer operationType) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetSsccInfo, NetworkStatus.LOADING));
+        apiService.getSsccInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, null, sscc, operationType))).enqueue(new Callback<SsccInfoResponse>() {
+            @Override
+            public void onResponse(Call<SsccInfoResponse> call, retrofit2.Response<SsccInfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getSsccInfo(), QueryType.GetSsccInfo, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.GetSsccInfo,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.GetSsccInfo,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SsccInfoResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetSsccInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
     }
 }

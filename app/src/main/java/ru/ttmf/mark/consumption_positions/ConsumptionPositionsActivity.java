@@ -25,6 +25,8 @@ import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.Position;
+import ru.ttmf.mark.network.model.SgtinInfo;
+import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.positions.PositionsSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
 
@@ -137,6 +139,35 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                         hideProgressDialog();
                         finish();
                         break;
+                    case GetSgtinInfo:
+                        hideProgressDialog();
+                        List<SgtinInfo> sgtinInfoList = (List<SgtinInfo>) response.getObject();
+                        //viewModel.setSgtinInfo(sgtinInfoList);
+                        if (sgtinInfoList.size() > 0) {
+                            showErrorBarcodeInfo("Номер документа: " + sgtinInfoList.get(0).getTtnId() + "\n" +
+                                    "Дата документа: " + sgtinInfoList.get(0).getTtnDate() + "\n" +
+                                    "Наименование склада: " + sgtinInfoList.get(0).getSkladName() + "\n" +
+                                    "PartyId: " + sgtinInfoList.get(0).getParty() + "\n" +
+                                    "Шифр: " + sgtinInfoList.get(0).getShifr() + "\n" +
+                                    "SGTIN: " + sgtinInfoList.get(0).getSgtin() + "\n" +
+                                    "SSCC: " + sgtinInfoList.get(0).getSscc() + "\n" +
+                                    "Статус скаинирования: " + sgtinInfoList.get(0).getTsdNaim() + "\n" +
+                                    "Статус акцептования: " + sgtinInfoList.get(0).getAcceptNaim() + "\n" +
+                                    "Статус товара: " + sgtinInfoList.get(0).getOstNaim() + "\n" +
+                                    "Тип акцептования: " + sgtinInfoList.get(0).getMarkAcceptTypeNaim() + "\n");
+                        }
+                        break;
+                    case GetSsccInfo:
+                        hideProgressDialog();
+                        List<SsccInfo> ssccInfoList = (List<SsccInfo>) response.getObject();
+                        if (ssccInfoList.size() > 0) {
+                            showErrorBarcodeInfo("Номер документа: " + ssccInfoList.get(0).getUnpDocId() + "\n" +
+                                    "SSCC: " + ssccInfoList.get(0).getSscc() + "\n" +
+                                    "Дата документа: " + ssccInfoList.get(0).getUnpDate() + "\n" +
+                                    "Вид операции: " + ssccInfoList.get(0).getAction() + "\n" +
+                                    "Статус операции: " + ssccInfoList.get(0).getRezult() + "\n");
+                        }
+                        break;
                 }
 
                 break;
@@ -179,9 +210,9 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
                 if (find == true) {
                     Scan(positionsAdapter.getItems(), matrix, code);
-                }
-                else {
+                } else {
                     ToastMessage("Штрихкод из другой партии!");
+                    GetSgtinSsccInfo(matrix);
                 }
 
             } else {
@@ -203,7 +234,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         return;
     }
 
-    private void playSound(int resId){
+    private void playSound(int resId) {
         MediaPlayer mp = MediaPlayer.create(this, resId);
         mp.setVolume(1, 1);
 
@@ -247,12 +278,12 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                     checkEanSgtin(matrix);
                     positionsAdapter.addItem(matrix.SGTIN());
                     viewModel.addPositions(matrix.SGTIN());
-                    scanPositions.add(new PositionsSaveModel(matrix.SGTIN(), code,1));
+                    scanPositions.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
                     scannedCount++;
                 } else {
                     positionsAdapter.addItem(matrix.SSCC());
                     viewModel.addPositions(matrix.SSCC());
-                    scanPositions.add(new PositionsSaveModel(matrix.SSCC(), "",1));
+                    scanPositions.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
                     scannedCount++;
                 }
             }
@@ -412,6 +443,24 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             dialog.dismiss();
         });
         builder.show();
+    }
 
+    protected void showErrorBarcodeInfo(String text) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(text);
+        builder.setTitle(R.string.barcode_info);
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.show();
+    }
+
+    //Получение информации по SGTIN-у или SSCC
+    private void GetSgtinSsccInfo(DataMatrix matrix) {
+        if (matrix.SSCC() == null) {
+            viewModel.getSgtinInfo(PreferenceController.getInstance().getToken(), matrix.SGTIN(), 1).observe(this, this);
+        } else {
+            viewModel.getSsccInfo(PreferenceController.getInstance().getToken(), matrix.SSCC(), 2).observe(this, this);
+        }
     }
 }

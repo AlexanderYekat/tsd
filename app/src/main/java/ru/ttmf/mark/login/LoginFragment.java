@@ -96,7 +96,8 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
 
         viewModel.login(
                 userField.getText().toString(),
-                this.hasGet(passwordField.getText().toString()))
+                this.hasGet(passwordField.getText().toString()),
+                getContext())
                 .observe(this, this::onChanged);
 
         devInfoviewModel.send_device_info(cur_serial, cur_version, userField.getText().toString());
