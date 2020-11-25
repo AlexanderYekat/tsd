@@ -380,7 +380,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 toast.show();
                 playSound(R.raw.s3);
                 AtomicReference<Boolean> rez;
-                rez = errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN());
+                rez = errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN(), matrix.EAN());
 
                 return rez.get();
             }
@@ -427,7 +427,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 .observe(this, this);
     }
 
-    private AtomicReference<Boolean> errorSgtinEanDialog(String message, String sgtin) {
+    private AtomicReference<Boolean> errorSgtinEanDialog(String message, String sgtin, String ean) {
         AtomicReference<Boolean> rez = new AtomicReference<>(false);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
@@ -441,6 +441,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         builder.setNegativeButton(R.string.no, (dialog, which) -> {
             rez.set(false);
             dialog.dismiss();
+            Ean = ean;
         });
         builder.show();
 

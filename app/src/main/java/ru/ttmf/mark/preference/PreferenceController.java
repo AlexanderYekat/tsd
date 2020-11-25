@@ -30,7 +30,7 @@ public class PreferenceController {
     private static final String cur_serial = "cur_serial";
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
-    private static final Integer cur_version = 136;
+    private static final Integer cur_version = 137;
     //test
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
 
