@@ -65,7 +65,6 @@ public class MainActivity extends ScanActivity
             showFragment(new HomeFragment(), getString(R.string.menu), true, false);
         }
 
-
         LiveData version;
         int cur_version = PreferenceController.getInstance().getVersion();
         //int last_version = 0;
@@ -96,7 +95,6 @@ public class MainActivity extends ScanActivity
             showDialog("Вышла новая версия программы!\nНачать скачивание?");
         }*/
     }
-
 
     @Override
     protected void onStart() {

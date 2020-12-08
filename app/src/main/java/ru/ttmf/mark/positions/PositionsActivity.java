@@ -266,7 +266,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         if (start_count == scannedPositions) {
             toast.show();
             playSound(R.raw.s3);
-            GetSgtinSsccInfo(matrix);
+            //GetSgtinSsccInfo(matrix);
         }
 
         updateScannedPositions();

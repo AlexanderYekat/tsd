@@ -110,7 +110,7 @@ public class ScanSsccActivity extends ScanActivity {
     }
 
     private void successfulScan(String code)
-    {
+        {
         DataMatrix matrix = new DataMatrix();
         try {
             DataMatrixHelpers.splitStr(matrix, code, 29);

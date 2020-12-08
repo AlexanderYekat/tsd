@@ -212,7 +212,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                     Scan(positionsAdapter.getItems(), matrix, code);
                 } else {
                     ToastMessage("Штрихкод из другой партии!");
-                    GetSgtinSsccInfo(matrix);
+                    //GetSgtinSsccInfo(matrix);
                 }
 
             } else {
