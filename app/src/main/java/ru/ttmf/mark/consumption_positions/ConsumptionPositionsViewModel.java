@@ -66,11 +66,11 @@ public class ConsumptionPositionsViewModel extends ViewModel {
         this.dataType = dataType;
     }
 
-    public LiveData<Response> getSgtinInfo(String token, String sgtin, Integer operationType) {
-        return NetworkRepository.getInstance().getSgtinInfo(token, sgtin, operationType);
+    public LiveData<Response> getTTNSgtinInfo(String token, String sgtin) {
+        return NetworkRepository.getInstance().getTTNSgtinInfo(token, sgtin);
     }
 
-    public LiveData<Response> getSsccInfo(String token, String sscc, Integer operationType) {
-        return NetworkRepository.getInstance().getSsccInfo(token, sscc, operationType);
+    public LiveData<Response> getTTNSsccInfo(String token, String sscc) {
+        return NetworkRepository.getInstance().getTTNSsccInfo(token, sscc);
     }
 }

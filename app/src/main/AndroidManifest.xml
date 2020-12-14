@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".scan_sscc.ScanSsccActivity"></activity>
+        <activity android:name=".sgtin_sscc_info.activity_sgtin_sscc_info"></activity>
+        <activity android:name=".scan_sscc.ScanSsccActivity" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

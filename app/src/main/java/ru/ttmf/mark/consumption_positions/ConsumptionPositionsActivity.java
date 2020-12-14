@@ -25,7 +25,7 @@ import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.Position;
-import ru.ttmf.mark.network.model.SgtinInfo;
+import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfo;
 import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.positions.PositionsSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
@@ -139,9 +139,9 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                         hideProgressDialog();
                         finish();
                         break;
-                    case GetSgtinInfo:
+                    case GetTTNSgtinInfo:
                         hideProgressDialog();
-                        List<SgtinInfo> sgtinInfoList = (List<SgtinInfo>) response.getObject();
+                        List<TTNSgtinInfo> sgtinInfoList = (List<TTNSgtinInfo>) response.getObject();
                         //viewModel.setSgtinInfo(sgtinInfoList);
                         if (sgtinInfoList.size() > 0) {
                             showErrorBarcodeInfo("Номер документа: " + sgtinInfoList.get(0).getTtnId() + "\n" +
@@ -157,7 +157,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                                     "Тип акцептования: " + sgtinInfoList.get(0).getMarkAcceptTypeNaim() + "\n");
                         }
                         break;
-                    case GetSsccInfo:
+                    case GetTTNSsccInfo:
                         hideProgressDialog();
                         List<SsccInfo> ssccInfoList = (List<SsccInfo>) response.getObject();
                         if (ssccInfoList.size() > 0) {
@@ -459,9 +459,9 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     //Получение информации по SGTIN-у или SSCC
     private void GetSgtinSsccInfo(DataMatrix matrix) {
         if (matrix.SSCC() == null) {
-            viewModel.getSgtinInfo(PreferenceController.getInstance().getToken(), matrix.SGTIN(), 1).observe(this, this);
+            viewModel.getTTNSgtinInfo(PreferenceController.getInstance().getToken(), matrix.SGTIN()).observe(this, this);
         } else {
-            viewModel.getSsccInfo(PreferenceController.getInstance().getToken(), matrix.SSCC(), 2).observe(this, this);
+            viewModel.getTTNSsccInfo(PreferenceController.getInstance().getToken(), matrix.SSCC()).observe(this, this);
         }
     }
 }

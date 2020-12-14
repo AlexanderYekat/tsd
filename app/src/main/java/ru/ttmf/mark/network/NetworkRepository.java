@@ -24,10 +24,6 @@ import ru.ttmf.mark.network.model.SavePositionsData;
 import ru.ttmf.mark.network.model.SearchData;
 import ru.ttmf.mark.network.model.SearchResponse;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -44,9 +40,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.ttmf.mark.network.model.SgtinInfoResponse;
+import ru.ttmf.mark.network.model.SgtinInfoP.PVSgtinInfoResponse;
+import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfoResponse;
+import ru.ttmf.mark.network.model.SgtinInfoP.UNPSgtinInfoResponse;
 import ru.ttmf.mark.network.model.SgtinSsccData;
-import ru.ttmf.mark.network.model.SsccInfoResponse;
+import ru.ttmf.mark.network.model.SsccInfoP.PVSsccInfoResponse;
+import ru.ttmf.mark.network.model.SsccInfoP.TTNSsccInfoResponse;
+//import ru.ttmf.mark.network.model.SsccInfoResponse;
+import ru.ttmf.mark.network.model.SsccInfoP.UNPSsccInfoResponse;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class NetworkRepository {
@@ -509,23 +510,23 @@ public class NetworkRepository {
         return liveData;
     }
 
-    public LiveData<Response> getSgtinInfo(String token, String sgtin, Integer operationType) {
+    public LiveData<Response> getTTNSgtinInfo(String token, String sgtin) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();
-        liveData.postValue(new Response(QueryType.GetSgtinInfo, NetworkStatus.LOADING));
-        apiService.getSgtinInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, sgtin, null, operationType))).enqueue(new Callback<SgtinInfoResponse>() {
+        liveData.postValue(new Response(QueryType.GetTTNSgtinInfo, NetworkStatus.LOADING));
+        apiService.getTTNSgtinInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, sgtin, null, 1))).enqueue(new Callback<TTNSgtinInfoResponse>() {
             @Override
-            public void onResponse(Call<SgtinInfoResponse> call, retrofit2.Response<SgtinInfoResponse> response) {
+            public void onResponse(Call<TTNSgtinInfoResponse> call, retrofit2.Response<TTNSgtinInfoResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    liveData.postValue(new Response(response.body().getSgtinInfo(), QueryType.GetSgtinInfo, NetworkStatus.SUCCESS));
+                    liveData.postValue(new Response(response.body().getSgtinInfo(), QueryType.GetTTNSgtinInfo, NetworkStatus.SUCCESS));
                 } else {
                     if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
                         liveData.postValue(new Response(
-                                QueryType.GetSgtinInfo,
+                                QueryType.GetTTNSgtinInfo,
                                 NetworkStatus.ERROR,
                                 response.body().getErrorText()));
                     } else {
                         liveData.postValue(new Response(
-                                QueryType.GetSgtinInfo,
+                                QueryType.GetTTNSgtinInfo,
                                 NetworkStatus.ERROR,
                                 ""));
                     }
@@ -533,9 +534,9 @@ public class NetworkRepository {
             }
 
             @Override
-            public void onFailure(Call<SgtinInfoResponse> call, Throwable t) {
+            public void onFailure(Call<TTNSgtinInfoResponse> call, Throwable t) {
                 liveData.postValue(new Response(
-                        QueryType.GetSgtinInfo,
+                        QueryType.GetTTNSgtinInfo,
                         NetworkStatus.ERROR,
                         "INTERNET ERROR"));
             }
@@ -543,23 +544,23 @@ public class NetworkRepository {
         return liveData;
     }
 
-    public LiveData<Response> getSsccInfo(String token, String sscc, Integer operationType) {
+    public LiveData<Response> getTTNSsccInfo(String token, String sscc) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();
-        liveData.postValue(new Response(QueryType.GetSsccInfo, NetworkStatus.LOADING));
-        apiService.getSsccInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, null, sscc, operationType))).enqueue(new Callback<SsccInfoResponse>() {
+        liveData.postValue(new Response(QueryType.GetTTNSsccInfo, NetworkStatus.LOADING));
+        apiService.getTTNSsccInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, null, sscc, 1))).enqueue(new Callback<TTNSsccInfoResponse>() {
             @Override
-            public void onResponse(Call<SsccInfoResponse> call, retrofit2.Response<SsccInfoResponse> response) {
+            public void onResponse(Call<TTNSsccInfoResponse> call, retrofit2.Response<TTNSsccInfoResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    liveData.postValue(new Response(response.body().getSsccInfo(), QueryType.GetSsccInfo, NetworkStatus.SUCCESS));
+                    liveData.postValue(new Response(response.body().getSsccInfo(), QueryType.GetTTNSsccInfo, NetworkStatus.SUCCESS));
                 } else {
                     if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
                         liveData.postValue(new Response(
-                                QueryType.GetSsccInfo,
+                                QueryType.GetTTNSsccInfo,
                                 NetworkStatus.ERROR,
                                 response.body().getErrorText()));
                     } else {
                         liveData.postValue(new Response(
-                                QueryType.GetSsccInfo,
+                                QueryType.GetTTNSsccInfo,
                                 NetworkStatus.ERROR,
                                 ""));
                     }
@@ -567,9 +568,146 @@ public class NetworkRepository {
             }
 
             @Override
-            public void onFailure(Call<SsccInfoResponse> call, Throwable t) {
+            public void onFailure(Call<TTNSsccInfoResponse> call, Throwable t) {
                 liveData.postValue(new Response(
-                        QueryType.GetSsccInfo,
+                        QueryType.GetTTNSsccInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+
+    public LiveData<Response> getUNPSgtinInfo(String token, String sgtin) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetUNPSgtinInfo, NetworkStatus.LOADING));
+        apiService.getUNPSgtinInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, sgtin, null, 2))).enqueue(new Callback<UNPSgtinInfoResponse>() {
+            @Override
+            public void onResponse(Call<UNPSgtinInfoResponse> call, retrofit2.Response<UNPSgtinInfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getSgtinInfo(), QueryType.GetUNPSgtinInfo, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.GetUNPSgtinInfo,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.GetUNPSgtinInfo,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UNPSgtinInfoResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetUNPSgtinInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<Response> getUNPSsccInfo(String token, String sscc) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetUNPSsccInfo, NetworkStatus.LOADING));
+        apiService.getUNPSsccInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, null, sscc, 2))).enqueue(new Callback<UNPSsccInfoResponse>() {
+            @Override
+            public void onResponse(Call<UNPSsccInfoResponse> call, retrofit2.Response<UNPSsccInfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getSsccInfo(), QueryType.GetUNPSsccInfo, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.GetUNPSsccInfo,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.GetUNPSsccInfo,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UNPSsccInfoResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetUNPSsccInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<Response> getPVSgtinInfo(String token, String sgtin) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetPVSgtinInfo, NetworkStatus.LOADING));
+        apiService.getPVSgtinInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, sgtin, null, 3))).enqueue(new Callback<PVSgtinInfoResponse>() {
+            @Override
+            public void onResponse(Call<PVSgtinInfoResponse> call, retrofit2.Response<PVSgtinInfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getSgtinInfo(), QueryType.GetPVSgtinInfo, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.GetPVSgtinInfo,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.GetPVSgtinInfo,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PVSgtinInfoResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetPVSgtinInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<Response> getPVSsccInfo(String token, String sscc) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetPVSsccInfo, NetworkStatus.LOADING));
+        apiService.getPVSsccInfo(new BaseModel("GetSgtinSsccInfo", new SgtinSsccData(token, null, sscc, 3))).enqueue(new Callback<PVSsccInfoResponse>() {
+            @Override
+            public void onResponse(Call<PVSsccInfoResponse> call, retrofit2.Response<PVSsccInfoResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getSsccInfo(), QueryType.GetPVSsccInfo, NetworkStatus.SUCCESS));
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) {
+                        liveData.postValue(new Response(
+                                QueryType.GetPVSsccInfo,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else {
+                        liveData.postValue(new Response(
+                                QueryType.GetPVSsccInfo,
+                                NetworkStatus.ERROR,
+                                ""));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PVSsccInfoResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetPVSsccInfo,
                         NetworkStatus.ERROR,
                         "INTERNET ERROR"));
             }

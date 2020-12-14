@@ -8,6 +8,7 @@
     <string name="settings">Настройки</string>
     <string name="scan_sscc">отсканируйте SSCC</string>
     <string name="scan_sscc2">Сканирование SSCC</string>
+    <string name="sscc_sgtin_info_txt">Отсканируйте SGTIN/SSCC</string>
     <string name="mark_id">Идентификатор МД</string>
     <string name="mark_id_text_view">Идентификатор МД:</string>
     <string name="field_is_empty">Не оставляйте поле пустым</string>
