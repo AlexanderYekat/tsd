@@ -66,11 +66,11 @@ public class MainActivity extends ScanActivity
         }
 
         LiveData version;
-        int cur_version = PreferenceController.getInstance().getVersion();
+        //int cur_version = PreferenceController.getInstance().getVersion();
         //int last_version = 0;
         //int check_version_attempt_count = 30;
 
-        NetworkRepository.getInstance().version();
+        //NetworkRepository.getInstance().version();
         /*Object t_obj = version.getValue();
         if (t_obj != null) {
             last_version = (int) t_obj;

@@ -18,7 +18,13 @@
     <string name="url_set">Установлен URL %s</string>
     <string name="default_url">по умолчанию</string>
     <string name="save">Сохранить</string>
+    <string name="proxy_settings">Настройки прокси</string>
     <string name="web_service_url">URL веб-сервиса:</string>
+    <string name="proxy_address">Адрес (пр. i.tatar.ru):</string>
+    <string name="proxy_port">Порт (пр. 8080):</string>
+    <string name="proxy_login">Логин (пр. govtatar\\med.ru):</string>
+    <string name="proxy_password">Пароль (пр. 2014):</string>
+    <string name="proxy_enable">Прокси</string>
     <string name="coming">Приход</string>
     <string name="direct_coming">Прямой Приход</string>
     <string name="reverse_coming">Обратный Приход</string>
@@ -29,6 +35,7 @@
     <string name="inventory">Товарные запасы</string>
     <string name="unpack">Расформирование SSCC</string>
     <string name="unpack_btn_text">Расформировать SSCC</string>
+    <string name="log">Логирование</string>
     <string name="logout">Выход</string>
     <string name="search">Поиск</string>
     <string name="ok">OK</string>
@@ -67,5 +74,10 @@
     <string name="bnt_left_text"><![CDATA[<]]><![CDATA[-]]></string>
     <string name="bnt_right_text"><![CDATA[-]]><![CDATA[>]]></string>
     <string name="barcode_info">Информация по штрихкоду</string>
+    <string name="import_files">Импорт</string>
 
+    <string-array name="urls">
+        <item>"https://etpzakaz.ru/sfarm/sgtin/api/mark/"</item>
+        <item>"https://med.ttmf.ru/mark/api/mark/"</item>
+    </string-array>
 </resources>

@@ -4,13 +4,16 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,19 +27,35 @@ import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
+import ru.ttmf.mark.network.model.DeviceSavePosition;
 import ru.ttmf.mark.network.model.Position;
 import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfo;
 import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.positions.PositionsSaveModel;
 import ru.ttmf.mark.preference.PreferenceController;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static ru.ttmf.mark.Helpers.Helpers.ToJson;
+import static ru.ttmf.mark.Helpers.Helpers.deleteLastScanFile;
 import static ru.ttmf.mark.Helpers.Helpers.isNumeric;
+import static ru.ttmf.mark.Helpers.Helpers.writeToFile;
 import static ru.ttmf.mark.invoice.InvoiceFragment.*;
 
 public class ConsumptionPositionsActivity extends ScanActivity implements Observer<Response> {
@@ -48,6 +67,9 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     private Integer totalCount;
     private Integer scannedCount;
     private Integer startCount;
+
+    private UUID scanSessionId;
+    private DeviceSavePosition deviceSavePosition;
 
     @BindView(R.id.positions)
     RecyclerView rvPositions;
@@ -95,6 +117,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
         totalConsumptionPositionsTextView = (TextView) findViewById(R.id.consumptionPositions);
         scanPositions = new ArrayList<>();
+
+        initScanSession(id);
     }
 
     @Override
@@ -102,6 +126,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         super.onDestroy();
         unregisterReceiver(intentBarcodeDataReceiver);
     }
+
 
     public void initToolbar(Toolbar toolbar, String title) {
         if (toolbar != null) {
@@ -111,6 +136,20 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         }
+    }
+
+    public void initScanSession(String pvsId) {
+        scanSessionId = UUID.randomUUID();
+
+        deviceSavePosition = new DeviceSavePosition();
+        deviceSavePosition.setUuid(scanSessionId);
+        deviceSavePosition.setPvsId(Long.parseLong(pvsId));
+        deviceSavePosition.setSaved(false);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH-mm-ss");
+        Date date = Calendar.getInstance().getTime();
+
+        deviceSavePosition.setScanDate(formatter.format(date));
     }
 
     @Override
@@ -224,6 +263,21 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
     }
 
+    /**
+     * @param posList      Список отсканированных штрихкодов
+     * @param dbSaveStatus Статус сохранения штрихкодов в БД (true проставляется только в методе save())
+     */
+    private void localSaveScanPositions(List<String> posList, boolean dbSaveStatus) {
+
+        if (dbSaveStatus) {
+            deviceSavePosition.setSaved(true);
+        }
+
+        deviceSavePosition.setSgtinSscc(posList);
+
+        writeToFile("Расход (pvsId: " + deviceSavePosition.getPvsId() + ") " + deviceSavePosition.getScanDate() + ".txt", ToJson(deviceSavePosition));
+    }
+
     private void ToastMessage(String message) {
         Toast toast = Toast.makeText(getApplicationContext(),
                 message, Toast.LENGTH_SHORT);
@@ -249,6 +303,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     }
 
     private void Scan(List<String> posList, DataMatrix matrix, String code) {
+
         //если количество отсканированнных штрихкодов меньше необходимого количества, то продолжить сканирование
         int old_scannedCount = scannedCount;
 
@@ -295,6 +350,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             }
 
             updateScannedPositions();
+
+            localSaveScanPositions(posList, false);
         } else {
             return;
         }
@@ -384,6 +441,9 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 getIntent().getExtras().getString(NAME),
                 scanPositions)
                 .observe(this, this);
+
+        //если удалось сохранить отсканированные позиции, то статус сохранения в бд в локальноном файле - true
+        localSaveScanPositions(positionsAdapter.getItems(), true);
     }
 
     private void showSaveDialog(String message) {
@@ -404,6 +464,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_scan);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
+            deleteLastScanFile();
             finish();
         });
         builder.setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss());

@@ -2,6 +2,7 @@ package ru.ttmf.mark.positions;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
@@ -23,19 +24,28 @@ import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
+import ru.ttmf.mark.network.model.DeviceSavePosition;
 import ru.ttmf.mark.network.model.Position;
 import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfo;
 import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.preference.PreferenceController;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static ru.ttmf.mark.Helpers.Helpers.ToJson;
 import static ru.ttmf.mark.Helpers.Helpers.isNumeric;
+import static ru.ttmf.mark.Helpers.Helpers.writeToFile;
 import static ru.ttmf.mark.invoice.InvoiceFragment.*;
 
 public class PositionsActivity extends ScanActivity implements Observer<Response>, PositionsAdapter.OnPositionClickListener {
@@ -50,6 +60,10 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private List<PositionsSaveModel> reverseDirectPosition;
     private AlertDialog.Builder builder;
     private Integer countBarcodes = 0;
+
+
+    private UUID scanSessionId;
+    private DeviceSavePosition deviceSavePosition;
 
     @BindView(R.id.positions)
     RecyclerView rvPositions;
@@ -98,6 +112,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
         totalPositionsTextView = (TextView) findViewById(R.id.totalPositions);
 
+        initScanSession(id);
 
         /*//Всплывающее окно с вводом количества сканируемых штрихкодов///
         builder = new AlertDialog.Builder(this);
@@ -203,6 +218,20 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         rvPositions.setAdapter(positionsAdapter);
     }
 
+    public void initScanSession(String ttnsId) {
+        scanSessionId = UUID.randomUUID();
+
+        deviceSavePosition = new DeviceSavePosition();
+        deviceSavePosition.setUuid(scanSessionId);
+        deviceSavePosition.setTtnsId(Long.parseLong(ttnsId));
+        deviceSavePosition.setSaved(false);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+
+        deviceSavePosition.setScanDate(formatter.format(date));
+    }
+
     private void playSound(int resId) {
         MediaPlayer mp = MediaPlayer.create(this, resId);
         mp.setVolume(1, 1);
@@ -229,6 +258,9 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 DirectScan(positionsAdapter.getItems(), matrix, code);
                 savePosition = reverseDirectPosition;
             }
+
+            //сохранение отсканированных позиций на устройстве (перезапись json)
+            localSaveScanPositions(reverseDirectPosition, false);
         } catch (Exception ex) {
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Некорректный штрихкод!", Toast.LENGTH_SHORT);
@@ -271,7 +303,6 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
         updateScannedPositions();
     }
-
 
     private void ReverseScan(List<Position> posList, DataMatrix matrix, String code) {
         if (posList.size() > 0) {
@@ -353,6 +384,31 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         updateScannedPositions();
     }
 
+    /**
+     * @param posList      Список отсканированных штрихкодов
+     * @param dbSaveStatus Статус сохранения штрихкодов в БД (true проставляется только в методе save())
+     */
+    private void localSaveScanPositions(List<PositionsSaveModel> posList, boolean dbSaveStatus) {
+
+        if (dbSaveStatus) {
+            deviceSavePosition.setSaved(true);
+        }
+
+        List<String> newList = new ArrayList<>();
+        //Преобразование List<Object> в List<String>
+        for (PositionsSaveModel pos :
+                posList) {
+            newList.add(pos.Sgtin);
+        }
+
+        deviceSavePosition.setSgtinSscc(newList);
+        if (TTN_TYPE.equals("1")) {
+            writeToFile("Обратный приход (ttnsId: " + deviceSavePosition.getTtnsId() + ") " + deviceSavePosition.getScanDate() + ".txt", ToJson(deviceSavePosition));
+        } else {
+            writeToFile("Прямой приход (ttnsId: " + deviceSavePosition.getTtnsId() + ") " + deviceSavePosition.getScanDate() + ".txt", ToJson(deviceSavePosition));
+        }
+    }
+
     private boolean checkPosition(List<Position> posList, DataMatrix matrix) {
         Boolean check = false;
         for (Position s : posList) {
@@ -425,6 +481,10 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                 getIntent().getExtras().getString(NAME),
                 savePosition)
                 .observe(this, this);
+
+
+        //если удалось сохранить отсканированные позиции, то статус сохранения в бд в локальноном файле - true
+        localSaveScanPositions(reverseDirectPosition, true);
     }
 
     private AtomicReference<Boolean> errorSgtinEanDialog(String message, String sgtin, String ean) {

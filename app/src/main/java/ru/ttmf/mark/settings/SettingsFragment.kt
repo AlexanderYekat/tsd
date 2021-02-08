@@ -1,8 +1,11 @@
 package ru.ttmf.mark.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.webkit.URLUtil
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import kotlinx.android.synthetic.main.fragment_settings.*
 import okhttp3.TlsVersion.*
 import ru.ttmf.mark.R
@@ -20,6 +23,15 @@ class SettingsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+/*        var mySpinner = view.findViewById<Spinner>(R.id.url_spinner)
+
+        //11.01.2021 - добавил combobox c адресами веб-сервисов
+        mySpinner.adapter = ArrayAdapter(
+                activity as Context,
+                R.layout.support_simple_spinner_dropdown_item,
+                resources.getStringArray(R.array.urls)
+        )*/
 
         et_service_url.setText(url)
         cb_remember_auth.isChecked = isRememberAuth
@@ -46,30 +58,36 @@ class SettingsFragment : BaseFragment() {
 
             if (url.isNotEmpty()) {
 
-                    if (!URLUtil.isValidUrl(url) || url[url.length - 1] != '/') {
-                        til_service_url.error = getString(R.string.url_setting_error)
-                        return@setOnClickListener
+                if (!URLUtil.isValidUrl(url) || url[url.length - 1] != '/') {
+                    til_service_url.error = getString(R.string.url_setting_error)
+                    return@setOnClickListener
+                }
+
+                val isRememberAuth = cb_remember_auth.isChecked
+
+                PreferenceController.getInstance().apply {
+                    this.url = url
+                    this.secureProtocol = protocol
+                    this.isRememberAuth = isRememberAuth
+
+                    if (!isRememberAuth) {
+                        login = ""
+                        password = ""
                     }
+                }
 
-                    val isRememberAuth = cb_remember_auth.isChecked
-
-                    PreferenceController.getInstance().apply {
-                        this.url = url
-                        this.secureProtocol = protocol
-                        this.isRememberAuth = isRememberAuth
-
-                        if (!isRememberAuth) {
-                            login = ""
-                            password = ""
-                        }
-                    }
-
-                    hideKeyboard()
-                    NetworkRepository.refresh()
-                    activity?.onBackPressed()
+                hideKeyboard()
+                NetworkRepository.refresh()
+                activity?.onBackPressed()
 
             } else
                 til_service_url.error = getString(R.string.field_is_empty)
+        }
+
+        //обработчик события настроек прокси (Kotlin)
+        btn_proxy_settings.setOnClickListener {
+            hideKeyboard()
+            showFragment(ProxySettingsFragment(), getString(R.string.proxy_settings), true, true)
         }
     }
 }

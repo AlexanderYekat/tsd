@@ -31,6 +31,16 @@ public class PreferenceController {
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
     private static final Integer cur_version = 138;
+
+    //proxy fields
+    private static final String PROXY_ADDRESS = "address";
+    private static final String PROXY_PORT = "port";
+    private static final String PROXY_LOGIN = "proxy_login";
+    private static final String PROXY_PASSWORD = "proxy_password";
+    private static final String PROXY_SETIINGS_ENABLE = "proxy_settings_enable";
+    private static final Boolean proxy_settings_enable = false;
+
+
     //test
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
 
@@ -66,12 +76,16 @@ public class PreferenceController {
     }
 
     public Integer getLastVersion() {
-        return sharedPreferences.getInt(LAST_VERSION,0);
+        return sharedPreferences.getInt(LAST_VERSION, 0);
     }
 
-    public Boolean getNotFinish() { return sharedPreferences.getBoolean(NOT_FINISH, not_finish); }
+    public Boolean getNotFinish() {
+        return sharedPreferences.getBoolean(NOT_FINISH, not_finish);
+    }
 
-    public Boolean getUnScanned() { return sharedPreferences.getBoolean(UNNECESSARY_SCANNED, unnecessary_scanned); }
+    public Boolean getUnScanned() {
+        return sharedPreferences.getBoolean(UNNECESSARY_SCANNED, unnecessary_scanned);
+    }
 
     public String getUrl() {
         return sharedPreferences.getString(URL, "https://med.ttmf.ru/mark/api/mark/");
@@ -152,4 +166,45 @@ public class PreferenceController {
         setToken("");
         sscc_items_list.clear();
     }
+
+    public String getProxyAddress() {
+        return sharedPreferences.getString(PROXY_ADDRESS, "");
+    }
+
+    public String getProxyPort() {
+        return sharedPreferences.getString(PROXY_PORT, "");
+    }
+
+    public String getProxyLogin() {
+        return sharedPreferences.getString(PROXY_LOGIN, "");
+    }
+
+    public String getProxyPassword() {
+        return sharedPreferences.getString(PROXY_PASSWORD, "");
+    }
+
+    public Boolean getProxySettingsState() {
+        return sharedPreferences.getBoolean(PROXY_SETIINGS_ENABLE, proxy_settings_enable);
+    }
+
+    public void setProxyAddress(String address) {
+        sharedPreferences.edit().putString(PROXY_ADDRESS, address).apply();
+    }
+
+    public void setProxyPort(String port) {
+        sharedPreferences.edit().putString(PROXY_PORT, port).apply();
+    }
+
+    public void setProxyLogin(String login) {
+        sharedPreferences.edit().putString(PROXY_LOGIN, login).apply();
+    }
+
+    public void setProxyPassword(String password) {
+        sharedPreferences.edit().putString(PROXY_PASSWORD, password).apply();
+    }
+
+    public void setProxySettingsState(Boolean state) {
+        sharedPreferences.edit().putBoolean(PROXY_SETIINGS_ENABLE, state).apply();
+    }
+
 }

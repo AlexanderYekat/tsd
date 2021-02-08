@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".sgtin_sscc_info.activity_sgtin_sscc_info"></activity>
         <activity android:name=".scan_sscc.ScanSsccActivity" />
+        <activity android:name=".logs.LogsActivity" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

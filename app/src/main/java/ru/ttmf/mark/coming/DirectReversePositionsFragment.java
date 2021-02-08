@@ -14,7 +14,7 @@ import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.preference.PreferenceController;
 
 
-public class DirectReversePositions extends BaseFragment {
+public class DirectReversePositionsFragment extends BaseFragment {
     @BindView(R.id.direct)
     Button directButton;
     @BindView(R.id.reverse)

@@ -22,6 +22,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
 
     private List<Invoice> invoices = new ArrayList<>();
     private OnInvoiceClickListener listener;
+    public int selectedRecyclerPosition = -1;
 
     public InvoiceAdapter(List<Invoice> invoices, OnInvoiceClickListener listener) {
         this.invoices.addAll(invoices);
@@ -37,6 +38,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
 
     @Override
     public void onBindViewHolder(@NonNull InvoiceData holder, int position) {
+        selectedRecyclerPosition = position;
         holder.itemView.setTag(position);
         Invoice invoice = invoices.get(position);
 

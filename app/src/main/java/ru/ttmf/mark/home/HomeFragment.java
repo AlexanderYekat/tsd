@@ -1,19 +1,16 @@
 package ru.ttmf.mark.home;
+
 import android.content.Intent;
-import android.widget.Button;
 import android.widget.Toast;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ru.ttmf.mark.R;
-import ru.ttmf.mark.barcode_info.BarcodeInfoActivity;
-import ru.ttmf.mark.coming.DirectReversePositions;
+import ru.ttmf.mark.coming.DirectReversePositionsFragment;
 //import ru.ttmf.mark.scan_sscc.ScanSscc;
 import ru.ttmf.mark.coming.SearchFragment;
 import ru.ttmf.mark.common.BaseFragment;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.login.LoginFragment;
+import ru.ttmf.mark.logs.LogsActivity;
 import ru.ttmf.mark.preference.PreferenceController;
 
 import butterknife.OnClick;
@@ -29,13 +26,13 @@ public class HomeFragment extends BaseFragment {
 
     @OnClick(R.id.coming)
     public void onComingClick() {
-        showFragment(new DirectReversePositions(),  getString(R.string.direct_reverse), true, true);
+        showFragment(new DirectReversePositionsFragment(), getString(R.string.direct_reverse), true, true);
         //showFragment(SearchFragment.createInstance(DataType.TTN),
         //      getString(R.string.coming), true, true);
     }
 
     @OnClick(R.id.consumption)
-    public void onConsumptionClick(){
+    public void onConsumptionClick() {
         showFragment(SearchFragment.createInstance(DataType.PV),
                 getString(R.string.consumption), true, true);
     }
@@ -63,4 +60,9 @@ public class HomeFragment extends BaseFragment {
         startActivity(intent);
     }
 
+    @OnClick(R.id.logs)
+    public void onLogInfoClick() {
+        Intent intent = new Intent(getContext(), LogsActivity.class);
+        startActivity(intent);
+    }
 }

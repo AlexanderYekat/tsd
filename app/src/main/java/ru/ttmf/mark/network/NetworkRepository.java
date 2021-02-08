@@ -6,6 +6,11 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
+import okhttp3.Request;
+import okhttp3.Route;
 import ru.ttmf.mark.DeviceInfo.DeviceInfoModel;
 import ru.ttmf.mark.common.NetworkStatus;
 import ru.ttmf.mark.common.QueryType;
@@ -24,6 +29,10 @@ import ru.ttmf.mark.network.model.SavePositionsData;
 import ru.ttmf.mark.network.model.SearchData;
 import ru.ttmf.mark.network.model.SearchResponse;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -54,16 +63,19 @@ public class NetworkRepository {
     private static NetworkRepository instance;
     private static Context context;
     private ApiService apiService;
+    private OkHttpClient client;
     private ApiService officeApiService;
 
     public NetworkRepository() {
 
         String url = PreferenceController.getInstance().getUrl();
 
+        client = createHttpClient();
+
         apiService = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(createHttpClient())
+                .client(client)
                 .build()
                 .create(ApiService.class);
 
@@ -77,24 +89,63 @@ public class NetworkRepository {
 
     public OkHttpClient createHttpClient() {
 
-        try{
+        OkHttpClient.Builder client = null;
 
         HttpLoggingInterceptor interceptor =
                 new HttpLoggingInterceptor(message -> Log.d("REST", message));
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .connectTimeout(100, TimeUnit.SECONDS)
-                .readTimeout(500, TimeUnit.SECONDS)
-                .followRedirects(true)
-                .followSslRedirects(true)
-                .addInterceptor(interceptor)
-                .hostnameVerifier((hostname, session) -> true);
+        try {
+            Boolean proxySettingsState = PreferenceController.getInstance().getProxySettingsState();
 
-        return enableTls(client).build();
-        }
-        catch (Exception ex){
-         return null;
+            //если заданы настройки прокси, то выставляем их в параметры запроса
+            if (proxySettingsState) {
+
+                String proxyHost = PreferenceController.getInstance().getProxyAddress();
+                int proxyPort = Integer.parseInt(PreferenceController.getInstance().getProxyPort());
+                final String username = PreferenceController.getInstance().getProxyLogin();
+                final String password = PreferenceController.getInstance().getPassword();
+
+                InetSocketAddress proxyAddr = InetSocketAddress.createUnresolved(proxyHost, proxyPort);
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, proxyAddr);
+
+                Authenticator proxyAuthenticator = new Authenticator() {
+                    @Override
+                    public Request authenticate(Route route, okhttp3.Response response) throws IOException {
+                        String credential = Credentials.basic(username, password);
+                        return response.request().newBuilder()
+                                .header("Proxy-Authorization", credential)
+                                .build();
+                    }
+                };
+
+                client = new OkHttpClient.Builder()
+                        .connectTimeout(100, TimeUnit.SECONDS)
+                        .readTimeout(500, TimeUnit.SECONDS)
+                        .followRedirects(true)
+                        .followSslRedirects(true)
+                        .addInterceptor(interceptor)
+                        .hostnameVerifier((hostname, session) -> true)
+                        .proxy(proxy)
+                        .proxyAuthenticator(proxyAuthenticator);
+
+                //иначе запрос без настроек
+            } else {
+
+                client = new OkHttpClient.Builder()
+                        .connectTimeout(100, TimeUnit.SECONDS)
+                        .readTimeout(500, TimeUnit.SECONDS)
+                        .followRedirects(true)
+                        .followSslRedirects(true)
+                        .addInterceptor(interceptor)
+                        .hostnameVerifier((hostname, session) -> true);
+            }
+
+            return enableTls(client).build();
+        } catch (
+                Exception ex) {
+            ex.getMessage();
+            return null;
         }
 
     }
@@ -277,7 +328,11 @@ public class NetworkRepository {
                 liveData.postValue(new Response(
                         QueryType.Login,
                         NetworkStatus.ERROR,
-                        t.getMessage()));
+                        "Ошибка: " + t.getMessage() + "\n" +
+                                "URL: " + call.request().url() + "\n" +
+                                "METHOD: " + call.request().method() + "\n" +
+                                "BODY: " + call.request().toString() + "\n" +
+                                "PROXY: " + client.proxy().address()));
             }
         });
         return liveData;
