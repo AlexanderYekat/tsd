@@ -21,9 +21,12 @@ import android.widget.TextView;
 
 import ru.ttmf.mark.DeviceInfo.DeviceInfoViewModel;
 import ru.ttmf.mark.R;
+import ru.ttmf.mark.common.QueryType;
 import ru.ttmf.mark.home.HomeFragment;
 import ru.ttmf.mark.common.BaseFragment;
 import ru.ttmf.mark.common.Response;
+import ru.ttmf.mark.network.model.OwnerId.OwnerIDRequest;
+import ru.ttmf.mark.network.model.OwnerId.OwnerIDResponse;
 import ru.ttmf.mark.network.model.UserData;
 import ru.ttmf.mark.preference.PreferenceController;
 
@@ -82,13 +85,10 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 cur_serial = Build.getSerial();
-            }
-            else
-            {
+            } else {
                 cur_serial = Build.SERIAL;
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             cur_serial = "indefined";
         }
 
@@ -164,29 +164,46 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
 
     @Override
     public void onChanged(@Nullable Response response) {
-        switch (response.getStatus()) {
-            case ERROR:
-                showErrorDialog(response.getError());
-                hideProgressDialog();
-                break;
-            case SUCCESS:
-                hideProgressDialog();
-                hideKeyboard();
-                UserData userData = ((UserData) response.getObject());
-                PreferenceController.getInstance().setToken(userData.getToken());
-                PreferenceController.getInstance().setUserId(userData.getUserInfo().getId());
-                PreferenceController.getInstance().setUserName(userData.getUserInfo().getFio());
+                if (response.getType().equals(QueryType.Login)) {
+                    switch (response.getStatus()) {
+                        case ERROR:
+                            showErrorDialog(response.getError());
+                            hideProgressDialog();
+                            break;
+                        case SUCCESS:
+                            hideProgressDialog();
+                            hideKeyboard();
+                            UserData userData = ((UserData) response.getObject());
+                            PreferenceController.getInstance().setToken(userData.getToken());
+                            PreferenceController.getInstance().setUserId(userData.getUserInfo().getId());
+                            PreferenceController.getInstance().setUserName(userData.getUserInfo().getFio());
 
-                if (PreferenceController.getInstance().isRememberAuth()) {
-                    PreferenceController.getInstance().setLogin(userField.getText().toString());
-                    PreferenceController.getInstance().setPassword(passwordField.getText().toString());
+                            if (PreferenceController.getInstance().isRememberAuth()) {
+                                PreferenceController.getInstance().setLogin(userField.getText().toString());
+                                PreferenceController.getInstance().setPassword(passwordField.getText().toString());
+                            }
+                            viewModel.GetOwnerID(
+                                    new OwnerIDRequest("MarkTSDOwnerIdGet", PreferenceController.getInstance().getUserId()))
+                                    .observe(this, this);
+                            //next();
+                            break;
+                        case LOADING:
+                            showProgressDialog();
+                            break;
+                    }
                 }
-
-                next();
-                break;
-            case LOADING:
-                showProgressDialog();
-                break;
-        }
+        else if (response.getType().equals(QueryType.GetOwnerID))
+                {
+                switch (response.getStatus()) {
+                    case ERROR:
+                        next();
+                        break;
+                    case SUCCESS:
+                        OwnerIDResponse data = (OwnerIDResponse) response.getObject();
+                        PreferenceController.getInstance().setOwnerId(data.data.ownerId);
+                        next();
+                        break;
+                }
+            }
     }
 }

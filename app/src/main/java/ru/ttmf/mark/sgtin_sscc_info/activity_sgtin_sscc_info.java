@@ -5,37 +5,20 @@ import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.graphics.drawable.RippleDrawable;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.ScanActivity;
 import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
@@ -43,20 +26,13 @@ import ru.ttmf.mark.barcode.OnDecodeCompleteListener;
 import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.Response;
-import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.SgtinInfoP.PVSgtinInfo;
 import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfo;
 import ru.ttmf.mark.network.model.SgtinInfoP.UNPSgtinInfo;
-import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.network.model.SsccInfoP.PVSsccInfo;
 import ru.ttmf.mark.network.model.SsccInfoP.TTNSsccInfo;
 import ru.ttmf.mark.network.model.SsccInfoP.UNPSsccInfo;
-import ru.ttmf.mark.positions.PositionsAdapter;
-import ru.ttmf.mark.positions.PositionsViewModel;
 import ru.ttmf.mark.preference.PreferenceController;
-import android.widget.TextView;
-import ru.ttmf.mark.R;
-import ru.ttmf.mark.scan_sscc.Sscc_item;
 
 public class activity_sgtin_sscc_info extends ScanActivity implements Observer<Response>{
 

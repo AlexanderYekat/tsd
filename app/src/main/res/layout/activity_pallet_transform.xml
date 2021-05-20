@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".scan_sgtin.sgtin_scan_activity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ToolBarStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ll_1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar2">
+
+        <LinearLayout
+            android:id="@+id/ll_1_1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.70"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?android:attr/progressBarStyleInverse"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/ssccTitle"
+                android:text="Текущий SSCC код"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp" />
+            <TextView
+                android:id="@+id/sscc"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                style="?android:listSeparatorTextViewStyle"/>
+
+            <TextView
+                android:id="@+id/scaned_list"
+                android:text="Список SGTIN кодов"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:layout_marginTop="5dp" />
+            <ListView
+                android:id="@+id/listview"
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </ListView>
+
+            <ScrollView
+                android:id="@+id/ScrollViewInfo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/InfoLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.70"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_1_2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.30"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_1_2_1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.50"
+                android:orientation="vertical">
+                <RadioGroup
+                    android:checkedButton="@+id/offer"
+                    android:id="@+id/toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginLeft="1dp"
+                        android:id="@+id/add"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="Добавить"
+                        android:textAllCaps="true"
+                        android:textSize="14sp"
+                        android:background="@drawable/radio_button_selector"
+                        android:textColor="@android:color/black" />
+
+                    <RadioButton
+                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginLeft="1dp"
+                        android:id="@+id/delete"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="Удалить"
+                        android:textAllCaps="true"
+                        android:textSize="14sp"
+                        android:background="@drawable/radio_button_selector"
+                        android:textColor="@android:color/black" />
+                </RadioGroup>
+            </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_1_2_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.50"
+                    android:orientation="horizontal">
+                <Button
+                    android:id="@+id/btn_send_changes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:background="@drawable/button_selector"
+                    android:text="Отправить"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/black" />
+                </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

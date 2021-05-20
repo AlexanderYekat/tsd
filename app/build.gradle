@@ -13,6 +13,9 @@ android {
             keyAlias 'tatmed'
             keyPassword 'n1Y9ep'
         }
+        buildFeatures {
+            viewBinding true
+        }
     }
 
     compileSdkVersion 29
@@ -20,8 +23,8 @@ android {
         applicationId "ru.ttmf.mark"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 38
-        versionName '1.38'
+        versionCode 39
+        versionName '1.39'
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

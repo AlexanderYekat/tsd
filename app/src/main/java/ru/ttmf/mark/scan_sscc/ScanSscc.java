@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.common.BaseFragment;
-import ru.ttmf.mark.common.DataType;
 
 public class ScanSscc extends BaseFragment {
     @Override

@@ -4,7 +4,13 @@ import ru.ttmf.mark.network.model.BaseModel;
 import ru.ttmf.mark.network.model.BaseResponse;
 import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.LoginResponse;
+import ru.ttmf.mark.network.model.OwnerId.OwnerIDRequest;
+import ru.ttmf.mark.network.model.OwnerId.OwnerIDResponse;
+import ru.ttmf.mark.network.model.PalletTransformRequest.PalletTransformRequest;
+import ru.ttmf.mark.network.model.PalletTransformResponse.TaskResponse;
 import ru.ttmf.mark.network.model.PositionsResponse;
+import ru.ttmf.mark.network.model.CisRequest.Request;
+import ru.ttmf.mark.network.model.CisResponse.ResponseData;
 import ru.ttmf.mark.network.model.SearchResponse;
 import ru.ttmf.mark.network.model.SgtinInfoP.PVSgtinInfoResponse;
 import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfoResponse;
@@ -16,7 +22,6 @@ import ru.ttmf.mark.network.model.SgtinInfoP.UNPSgtinInfoResponse;
 import ru.ttmf.mark.network.model.SsccInfoP.PVSsccInfoResponse;
 import ru.ttmf.mark.network.model.SsccInfoP.TTNSsccInfoResponse;
 import ru.ttmf.mark.network.model.SsccInfoP.UNPSsccInfoResponse;
-import ru.ttmf.mark.network.model.SsccInfoResponse;
 
 public interface ApiService {
 
@@ -61,4 +66,13 @@ public interface ApiService {
 
     @POST(".")
     Call<PVSsccInfoResponse> getPVSsccInfo(@Body BaseModel ssccInfo);
+
+    @POST(".")
+    Call<ResponseData> getCisInfo(@Body Request cisInfo);
+
+    @POST(".")
+    Call<TaskResponse> SaveTaskTransformation(@Body PalletTransformRequest TaskData);
+
+    @POST(".")
+    Call<OwnerIDResponse> GetOwnerID(@Body OwnerIDRequest ownerIDInfo);
 }

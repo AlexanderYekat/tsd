@@ -1,5 +1,5 @@
 <resources>
-    <string name="menu">Меню (версия 1.38)</string>
+    <string name="menu">Меню (версия 1.39)</string>
     <!--Для увеличения версии: обновить строку выше + обновить в gradle + обновить [cur_version] в PreferenceController-->
     <string name="app_name">Маркировка ТСД</string>
     <string name="userData">Имя пользователя</string>
@@ -8,6 +8,11 @@
     <string name="settings">Настройки</string>
     <string name="scan_sscc">отсканируйте SSCC</string>
     <string name="scan_sscc2">Сканирование SSCC</string>
+    <string name="scan_sgtin_name">Сканирование SGTIN</string>
+    <string name="scan_name">Сканирование</string>
+    <string name="pallet_transform_name">Трансформация короба</string>
+    <string name="task_name">Создать задачу</string>
+    <string name="verification_name">Верификация</string>
     <string name="sscc_sgtin_info_txt">Отсканируйте SGTIN/SSCC</string>
     <string name="mark_id">Идентификатор МД</string>
     <string name="mark_id_text_view">Идентификатор МД:</string>
@@ -56,7 +61,7 @@
     <string name="delete_scan">Все отсканированные позиции будут удалены!</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-    <string name="need_relogin">Токен устарел, нуобходимо выполнить повторный вход</string>
+    <string name="need_relogin">Токен устарел, необходимо выполнить повторный вход</string>
     <string name="please_wait">Пожалуйста, подождите</string>
     <string name="loading">Загрузка</string>
     <string name="error">Ошибка</string>
@@ -75,6 +80,40 @@
     <string name="bnt_right_text"><![CDATA[-]]><![CDATA[>]]></string>
     <string name="barcode_info">Информация по штрихкоду</string>
     <string name="import_files">Импорт</string>
+    <string name="gtin_scanned">Отсканировано</string>
+    <!--> Заголовки для вывода информации по коду <-->
+    <string name="cis">КИЗ</string>
+    <string name="gtin">GTIN</string>
+    <string name="ssccTitle">SSCC</string>
+    <string name="productGroupTitle">Группа</string>
+    <string name="productNameTitle">Наименование</string>
+    <string name="brandTitle">Бренд</string>
+    <string name="tnVedTitle">Код ТН ВЭД</string>
+    <string name="statusTitle">Статус</string>
+    <string name="expiratioinDateTitle">Дата срока годности</string>
+    <string name="emissionTypeTitle">Тип эмиссии</string>
+    <string name="emissionDateTitle">Дата эмиссии</string>
+    <string name="packageTypeTitle">Код типа упаковки</string>
+    <string name="ownerNameTitle">Наименование собственника</string>
+    <string name="ownerInnTitle">ИНН собственника</string>
+    <string name="producerNameTitle">Наименование производителя</string>
+    <string name="producerInnTitle">ИНН производителя</string>
+    <string name="prVetTitle">
+        ID производственного ВСД(для продукции, \n
+        произведенной в РФ) или транспортного ВСД(для продукции, \n
+        произведенной вне РФ)
+    </string>
+    <!--><-->
+    <string name="scan_sgtin_success">Проверка SGTIN пройдена успешно</string>
+    <string name="scan_sscc_success">Проверка SSCC пройдена успешн</string>
+    <string name="scan_fail">Проверка кода не пройдена</string>
+    <string name="non_authorized">Для получения информации выполните авторизацию</string>
+    <string name="verification_scan">Сканируйте SSCC/SGTIN код</string>
+    <string name="basic_info">Основная информация</string>
+    <string name="emission_info">Эмиссия</string>
+    <string name="owner_info">Владелец</string>
+    <string name="prVet_info">Вет. документ</string>
+
 
     <string-array name="urls">
         <item>"https://etpzakaz.ru/sfarm/sgtin/api/mark/"</item>

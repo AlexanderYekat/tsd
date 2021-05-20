@@ -91,6 +91,22 @@ public class DataMatrix {
             return null;
         }
     }
+    public final String getSSCC() {
+        if (this.SSCC != null) {
+            return ("00"+this.SSCC);
+        } else {
+            return null;
+        }
+    }
+
+    public final String Cis()
+    {
+        if (this.GTIN != null) {
+            return ("01" + this.GTIN + "21" + this.SN);
+        } else {
+            return null;
+        }
+    }
 
     public final String EAN() {
         return (this.SGTIN().substring(1, 14));

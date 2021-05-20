@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -17,13 +18,16 @@
         android:theme="@style/AppTheme">
         <activity android:name=".sgtin_sscc_info.activity_sgtin_sscc_info"></activity>
         <activity android:name=".scan_sscc.ScanSsccActivity" />
+        <activity android:name=".scan_sgtin.sgtin_scan_activity"></activity>
+        <activity android:name=".Verification.VerificationActivity"></activity>
         <activity android:name=".logs.LogsActivity" />
+        <activity android:name=".pallet_transform.pallet_transform_activity" />
+        <activity android:name=".task.task_activity" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

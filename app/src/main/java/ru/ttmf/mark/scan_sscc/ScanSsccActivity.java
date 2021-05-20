@@ -1,14 +1,10 @@
 package ru.ttmf.mark.scan_sscc;
 
-import android.arch.lifecycle.Observer;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,9 +17,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -33,8 +26,6 @@ import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
 import ru.ttmf.mark.barcode.OnDecodeCompleteListener;
 import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
-import ru.ttmf.mark.common.Response;
-import ru.ttmf.mark.positions.PositionsAdapter;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class ScanSsccActivity extends ScanActivity {
@@ -173,6 +164,7 @@ public class ScanSsccActivity extends ScanActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                unregisterReceiver(intentBarcodeDataReceiver);
                 break;
         }
         return super.onOptionsItemSelected(item);

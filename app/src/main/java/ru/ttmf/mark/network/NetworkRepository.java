@@ -9,7 +9,6 @@ import android.util.Log;
 
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
-import okhttp3.Request;
 import okhttp3.Route;
 import ru.ttmf.mark.DeviceInfo.DeviceInfoModel;
 import ru.ttmf.mark.common.NetworkStatus;
@@ -22,8 +21,15 @@ import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.ConsumptionSearchData;
 import ru.ttmf.mark.network.model.LoginModel;
 import ru.ttmf.mark.network.model.LoginResponse;
+import ru.ttmf.mark.network.model.OwnerId.OwnerIDRequest;
+import ru.ttmf.mark.network.model.OwnerId.OwnerIDResponse;
+import ru.ttmf.mark.network.model.PalletTransformRequest.PalletTransformRequest;
+import ru.ttmf.mark.network.model.PalletTransformResponse.TaskResponse;
 import ru.ttmf.mark.network.model.PositionData;
 import ru.ttmf.mark.network.model.PositionsResponse;
+import ru.ttmf.mark.network.model.CisRequest.Request;
+import ru.ttmf.mark.network.model.CisRequest.requestdata;
+import ru.ttmf.mark.network.model.CisResponse.ResponseData;
 import ru.ttmf.mark.network.model.SaveConsumptionPositionsData;
 import ru.ttmf.mark.network.model.SavePositionsData;
 import ru.ttmf.mark.network.model.SearchData;
@@ -31,7 +37,6 @@ import ru.ttmf.mark.network.model.SearchResponse;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +70,8 @@ public class NetworkRepository {
     private ApiService apiService;
     private OkHttpClient client;
     private ApiService officeApiService;
+    private ApiService apiServiceMarkMilk;
+    private ApiService apiServiceMarkTsd;
 
     public NetworkRepository() {
 
@@ -81,6 +88,18 @@ public class NetworkRepository {
 
         officeApiService = new Retrofit.Builder()
                 .baseUrl("https://office2.ttmf.ru/KassaWeb/api/ArtisProgramVersionCheck/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(createHttpClient())
+                .build()
+                .create(ApiService.class);
+        apiServiceMarkMilk = new Retrofit.Builder()
+                .baseUrl("https://office2.ttmf.ru/perfume/api/MarkMilk/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(createHttpClient())
+                .build()
+                .create(ApiService.class);
+        apiServiceMarkTsd = new Retrofit.Builder()
+                .baseUrl("https://etpzakaz.ru/sfarm/ws/api/markTsd/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(createHttpClient())
                 .build()
@@ -111,7 +130,7 @@ public class NetworkRepository {
 
                 Authenticator proxyAuthenticator = new Authenticator() {
                     @Override
-                    public Request authenticate(Route route, okhttp3.Response response) throws IOException {
+                    public okhttp3.Request authenticate(Route route, okhttp3.Response response) throws IOException {
                         String credential = Credentials.basic(username, password);
                         return response.request().newBuilder()
                                 .header("Proxy-Authorization", credential)
@@ -250,7 +269,6 @@ public class NetworkRepository {
                     if (t_obj != null) {
                         last_version = Integer.parseInt(t_obj);
                     }
-
                     PreferenceController.getInstance().setLastVersion(last_version);
                 }
             }
@@ -327,18 +345,17 @@ public class NetworkRepository {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 liveData.postValue(new Response(
                         QueryType.Login,
-                        NetworkStatus.ERROR,
-                        "Ошибка: " + t.getMessage() + "\n" +
+                        NetworkStatus.ERROR, "INTERNET ERROR"));
+                        /*"Ошибка: " + t.getMessage() + "\n" +
                                 "URL: " + call.request().url() + "\n" +
                                 "METHOD: " + call.request().method() + "\n" +
-                                "BODY: " + call.request().toString() + "\n" +
-                                "PROXY: " + client.proxy().address()));
+                                "BODY: " + call.request().toString() + "\n"));/* +
+                                "PROXY: " + client.proxy().address()));*/
             }
         });
         return liveData;
 
     }
-
 
     public LiveData<Response> search(DataType type, String token, String userId, String name) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();
@@ -436,7 +453,6 @@ public class NetworkRepository {
         return liveData;
 
     }
-
 
     public LiveData<Response> savePositions(DataType type,
                                             String token,
@@ -633,7 +649,6 @@ public class NetworkRepository {
         return liveData;
     }
 
-
     public LiveData<Response> getUNPSgtinInfo(String token, String sgtin) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();
         liveData.postValue(new Response(QueryType.GetUNPSgtinInfo, NetworkStatus.LOADING));
@@ -763,6 +778,98 @@ public class NetworkRepository {
             public void onFailure(Call<PVSsccInfoResponse> call, Throwable t) {
                 liveData.postValue(new Response(
                         QueryType.GetPVSsccInfo,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<Response> getCisInfo(requestdata request) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetCisesInfoList, NetworkStatus.LOADING));
+        apiServiceMarkMilk.getCisInfo(new Request("GetCisesInfoList", request)).enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, retrofit2.Response<ResponseData> response) {
+                if (response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().getData(), QueryType.GetCisesInfoList, NetworkStatus.SUCCESS)); // Если запрос выполнен успешно
+                } else {
+                    if (response.body() != null && !TextUtils.isEmpty(response.body().getErrorText())) { // Если запрос выполнен некорректно, ответ не пустой и содержит ошибку
+                        liveData.postValue(new Response(
+                                QueryType.GetCisesInfoList,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    } else if (response.body() != null && TextUtils.isEmpty(response.body().getErrorText())){ // Если запрос не выполнен корректно, ответ непустой, но не содержит ошибку (ошибку содержит CisData)
+                        liveData.postValue(new Response(response.body().getData(),
+                                QueryType.GetCisesInfoList,
+                                NetworkStatus.SUCCESS));
+                    }
+                    else {
+                        liveData.postValue(new Response(
+                                QueryType.GetCisesInfoList,
+                                NetworkStatus.ERROR,
+                                response.body().CisData.get(0).errorMessage));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetCisesInfoList,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+    public LiveData<Response> SaveTaskTransformation(PalletTransformRequest request) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.SaveTaskTransformation, NetworkStatus.LOADING));
+        apiServiceMarkTsd.SaveTaskTransformation(request).enqueue(new Callback<TaskResponse>() {
+            @Override
+            public void onResponse(Call<TaskResponse> call, retrofit2.Response<TaskResponse> response) {
+                if (response.body().isSuccess()) {
+                    liveData.postValue(new Response(response.body().Data, QueryType.SaveTaskTransformation, NetworkStatus.SUCCESS));
+                }
+                else {
+                        liveData.postValue(new Response(
+                                QueryType.SaveTaskTransformation,
+                                NetworkStatus.ERROR,
+                                response.body().getErrorText()));
+                    }
+                }
+            @Override
+            public void onFailure(Call<TaskResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.SaveTaskTransformation,
+                        NetworkStatus.ERROR,
+                        "INTERNET ERROR"));
+            }
+        });
+        return liveData;
+    }
+
+    public LiveData<Response> GetOwnerID(OwnerIDRequest request) {
+        MutableLiveData<Response> liveData = new MutableLiveData<>();
+        liveData.postValue(new Response(QueryType.GetOwnerID, NetworkStatus.LOADING));
+        apiServiceMarkTsd.GetOwnerID(request).enqueue(new Callback<OwnerIDResponse>() {
+            @Override
+            public void onResponse(Call<OwnerIDResponse> call, retrofit2.Response<OwnerIDResponse> response) {
+                if (response.isSuccessful()) {
+                    liveData.postValue(new Response(response.body(), QueryType.GetOwnerID, NetworkStatus.SUCCESS));
+                }
+                else {
+                    liveData.postValue(new Response(
+                            QueryType.GetOwnerID,
+                            NetworkStatus.ERROR,
+                            response.body().getErrorText()));
+                }
+            }
+            @Override
+            public void onFailure(Call<OwnerIDResponse> call, Throwable t) {
+                liveData.postValue(new Response(
+                        QueryType.GetOwnerID,
                         NetworkStatus.ERROR,
                         "INTERNET ERROR"));
             }

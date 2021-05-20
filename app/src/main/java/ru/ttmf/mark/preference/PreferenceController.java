@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.TlsVersion;
-import ru.ttmf.mark.R;
+import ru.ttmf.mark.network.model.CisResponse.CisData;
 import ru.ttmf.mark.scan_sscc.Sscc_item;
 
 public class PreferenceController {
@@ -17,6 +16,7 @@ public class PreferenceController {
     private static final String TOKEN = "token";
     private static final String USER_ID = "user_id";
     private static final String USER_NAME = "user_name";
+    private static final String OWNER_ID = "owner_id";
     private static final String URL = "url";
     private static final String PROTOCOL = "secure_protocol";
     private static final String REMEMBER_AUTH = "remember_auth";
@@ -30,7 +30,7 @@ public class PreferenceController {
     private static final String cur_serial = "cur_serial";
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
-    private static final Integer cur_version = 138;
+    private static final Integer cur_version = 139;
 
     //proxy fields
     private static final String PROXY_ADDRESS = "address";
@@ -43,6 +43,8 @@ public class PreferenceController {
 
     //test
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
+    //public List<sgtin_item> sgtin_items_list = new ArrayList<sgtin_item>();
+    public List<CisData> CisesInfoList = new ArrayList<CisData>();
 
     public static PreferenceController getInstance() {
         if (instance == null) {
@@ -65,6 +67,10 @@ public class PreferenceController {
 
     public String getUserName() {
         return sharedPreferences.getString(USER_NAME, "");
+    }
+
+    public int getOwnerId() {
+        return sharedPreferences.getInt(OWNER_ID, 0);
     }
 
     public Integer getVersion() {
@@ -105,6 +111,10 @@ public class PreferenceController {
 
     public void setUserName(String name) {
         sharedPreferences.edit().putString(USER_NAME, name).apply();
+    }
+
+    public void setOwnerId(int OwnerId) {
+        sharedPreferences.edit().putInt(OWNER_ID, OwnerId).apply();
     }
 
     public void setVersion(Integer version) {
@@ -164,7 +174,10 @@ public class PreferenceController {
         setUserId("");
         setUserName("");
         setToken("");
+        setOwnerId(0);
         sscc_items_list.clear();
+        //sgtin_items_list.clear();
+        CisesInfoList.clear();
     }
 
     public String getProxyAddress() {

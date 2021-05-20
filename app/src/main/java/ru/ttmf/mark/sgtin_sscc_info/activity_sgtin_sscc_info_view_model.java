@@ -6,9 +6,6 @@ import android.arch.lifecycle.ViewModel;
 import ru.ttmf.mark.common.DataType;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.NetworkRepository;
-import ru.ttmf.mark.network.model.Position;
-
-import java.util.List;
 
 public class activity_sgtin_sscc_info_view_model extends ViewModel {
 

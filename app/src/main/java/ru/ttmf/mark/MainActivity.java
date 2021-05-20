@@ -28,6 +28,7 @@ import com.google.gson.annotations.SerializedName;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
+import ru.ttmf.mark.barcode.OnDecodeCompleteListener;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.home.HomeFragment;
 import ru.ttmf.mark.login.LoginFragment;
@@ -39,7 +40,8 @@ import ru.ttmf.mark.search_consumption.ConsumptionSearchViewModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends ScanActivity
+public class MainActivity
+        extends ScanActivity
         implements //Observer<Response>,
         FragmentManager.OnBackStackChangedListener,
         android.support.v4.app.FragmentManager.OnBackStackChangedListener {
@@ -56,8 +58,14 @@ public class MainActivity extends ScanActivity
         ButterKnife.bind(this);
         initToolbar(toolbar);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver((type, length, barcode)
-                -> searchViewModel.setSearchTerm(barcode));
+        /*intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver((type, length, barcode)
+              -> searchViewModel.setSearchTerm(barcode));*/
+
+        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
+            @Override
+            public void onDecodeCompleted(int type, int length, String barcode) {
+            }
+        });
 
         if (TextUtils.isEmpty(PreferenceController.getInstance().getToken())) {
             showFragment(new LoginFragment(), getString(R.string.enter), true, false);
@@ -94,6 +102,7 @@ public class MainActivity extends ScanActivity
         /*if (cur_version < last_version) {
             showDialog("Вышла новая версия программы!\nНачать скачивание?");
         }*/
+
     }
 
     @Override
