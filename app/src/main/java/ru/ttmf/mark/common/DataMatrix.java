@@ -99,7 +99,7 @@ public class DataMatrix {
         }
     }
 
-    public final String Cis()
+    public final String getSGTIN()
     {
         if (this.GTIN != null) {
             return ("01" + this.GTIN + "21" + this.SN);

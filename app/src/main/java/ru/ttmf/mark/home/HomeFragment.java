@@ -1,13 +1,12 @@
 package ru.ttmf.mark.home;
 
 import android.content.Intent;
-import android.widget.Toast;
 
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.Verification.VerificationActivity;
 import ru.ttmf.mark.coming.DirectReversePositionsFragment;
 import ru.ttmf.mark.pallet_transform.pallet_transform_activity;
-import ru.ttmf.mark.scan_sgtin.sgtin_scan_activity;
+import ru.ttmf.mark.scan.scan_activity;
 import ru.ttmf.mark.coming.SearchFragment;
 import ru.ttmf.mark.common.BaseFragment;
 import ru.ttmf.mark.common.DataType;
@@ -16,8 +15,6 @@ import ru.ttmf.mark.logs.LogsActivity;
 import ru.ttmf.mark.preference.PreferenceController;
 
 import butterknife.OnClick;
-import ru.ttmf.mark.scan_sscc.ScanSsccActivity;
-import ru.ttmf.mark.sgtin_sscc_info.activity_sgtin_sscc_info;
 import ru.ttmf.mark.task.task_activity;
 
 public class HomeFragment extends BaseFragment {
@@ -73,7 +70,7 @@ public class HomeFragment extends BaseFragment {
 
     @OnClick(R.id.scan_sgtin)
     public void onScanSgtinClick() {
-        Intent intent = new Intent(getContext(), sgtin_scan_activity.class);
+        Intent intent = new Intent(getContext(), scan_activity.class);
         startActivity(intent);
     }
 

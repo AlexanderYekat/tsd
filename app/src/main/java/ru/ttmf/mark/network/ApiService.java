@@ -6,8 +6,8 @@ import ru.ttmf.mark.network.model.ConsumptionResponse;
 import ru.ttmf.mark.network.model.LoginResponse;
 import ru.ttmf.mark.network.model.OwnerId.OwnerIDRequest;
 import ru.ttmf.mark.network.model.OwnerId.OwnerIDResponse;
-import ru.ttmf.mark.network.model.PalletTransformRequest.PalletTransformRequest;
-import ru.ttmf.mark.network.model.PalletTransformResponse.TaskResponse;
+import ru.ttmf.mark.network.model.TaskTransformationRequest.TaskRequest;
+import ru.ttmf.mark.network.model.TaskTransformationResponse.TaskResponse;
 import ru.ttmf.mark.network.model.PositionsResponse;
 import ru.ttmf.mark.network.model.CisRequest.Request;
 import ru.ttmf.mark.network.model.CisResponse.ResponseData;
@@ -71,7 +71,7 @@ public interface ApiService {
     Call<ResponseData> getCisInfo(@Body Request cisInfo);
 
     @POST(".")
-    Call<TaskResponse> SaveTaskTransformation(@Body PalletTransformRequest TaskData);
+    Call<TaskResponse> SaveTaskTransformation(@Body TaskRequest TaskData);
 
     @POST(".")
     Call<OwnerIDResponse> GetOwnerID(@Body OwnerIDRequest ownerIDInfo);

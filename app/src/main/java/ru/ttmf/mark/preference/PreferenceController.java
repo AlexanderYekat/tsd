@@ -30,7 +30,7 @@ public class PreferenceController {
     private static final String cur_serial = "cur_serial";
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
-    private static final Integer cur_version = 139;
+    private static final Integer cur_version = 140;
 
     //proxy fields
     private static final String PROXY_ADDRESS = "address";
@@ -43,7 +43,6 @@ public class PreferenceController {
 
     //test
     public List<Sscc_item> sscc_items_list = new ArrayList<Sscc_item>();
-    //public List<sgtin_item> sgtin_items_list = new ArrayList<sgtin_item>();
     public List<CisData> CisesInfoList = new ArrayList<CisData>();
 
     public static PreferenceController getInstance() {
@@ -98,7 +97,7 @@ public class PreferenceController {
     }
 
     public String getSecureProtocol() {
-        return sharedPreferences.getString(PROTOCOL, TlsVersion.TLS_1_0.javaName());
+        return sharedPreferences.getString(PROTOCOL, TlsVersion.TLS_1_2.javaName());
     }
 
     public void setToken(String token) {
@@ -176,7 +175,6 @@ public class PreferenceController {
         setToken("");
         setOwnerId(0);
         sscc_items_list.clear();
-        //sgtin_items_list.clear();
         CisesInfoList.clear();
     }
 

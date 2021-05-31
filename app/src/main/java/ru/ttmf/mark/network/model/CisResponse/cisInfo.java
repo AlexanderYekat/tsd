@@ -163,7 +163,8 @@ public class cisInfo
         list.add(new listview_item(ownerInn, R.string.ownerInnTitle));
         list.add(new listview_item(producerName, R.string.producerNameTitle));
         list.add(new listview_item(producerInn, R.string.producerInnTitle));
-        return RemoveNulls(list);    }
+        return RemoveNulls(list);
+    }
 
     public ArrayList<listview_item> GetPrvetInfo()
     {
@@ -172,22 +173,22 @@ public class cisInfo
         return RemoveNulls(list);
     }
 
-private ArrayList<listview_item> RemoveNulls(ArrayList<listview_item> list)
-{
-    ArrayList<listview_item> nulls = new ArrayList<listview_item>();
-    for(listview_item item: list)
+    public ArrayList<String> GetChild()
     {
-        if(item.text==null)
+        return child;
+    }
+    private ArrayList<listview_item> RemoveNulls(ArrayList<listview_item> list)
+    {
+        ArrayList<listview_item> result = new ArrayList<listview_item>();
+        for(listview_item item: list)
         {
-            nulls.add(item);
+            if(item.text!=null)
+            {
+                result.add(item);
+            }
         }
+        return result;
     }
-    for(listview_item pos: nulls)
-    {
-        list.remove(pos);
-    }
-    return list;
-}
 }
 
 

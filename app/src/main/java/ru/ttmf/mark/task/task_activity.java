@@ -3,6 +3,7 @@ package ru.ttmf.mark.task;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -10,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -29,9 +31,10 @@ import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.QueryType;
 import ru.ttmf.mark.common.Response;
-import ru.ttmf.mark.network.model.PalletTransformRequest.OperationType;
-import ru.ttmf.mark.network.model.PalletTransformRequest.PalletTransformRequest;
-import ru.ttmf.mark.network.model.PalletTransformRequest.palletData;
+import ru.ttmf.mark.network.model.TaskTransformationRequest.OperationType;
+import ru.ttmf.mark.network.model.TaskTransformationRequest.TaskRequest;
+import ru.ttmf.mark.network.model.TaskTransformationRequest.TaskData;
+import ru.ttmf.mark.pallet_transform.pallet_transform_activity;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class task_activity extends ScanActivity implements Observer<Response> {
@@ -45,11 +48,11 @@ public class task_activity extends ScanActivity implements Observer<Response> {
     @BindView(R.id.sgtins_listview)
     ListView sgtins_listview;
 
-    @BindView(R.id.ssccTitle)
-    TextView ssccTitle;
+    @BindView(R.id.ssccListTitle)
+    TextView ssccListTitle;
 
-    @BindView(R.id.scaned_list)
-    TextView scaned_list;
+    @BindView(R.id.sgtinListTitle)
+    TextView sgtinListTitle;
 
     private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     private task_activity_model viewModel;
@@ -114,7 +117,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
                 boolean find = false;
                 for (String var : SGTIN_list)
                 {
-                    if (var.equals(matrix.Cis())) // Проверка, был ли код отсканирован ранее
+                    if (var.equals(matrix.getSGTIN())) // Проверка, был ли код отсканирован ранее
                     {
                         find = true;
                         toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG); // Если код ранее был корректно отсканирован, запрос не отправляется
@@ -123,7 +126,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
                     }
                 }
                 if (!find) {
-                    SGTIN_list.add(matrix.Cis());
+                    SGTIN_list.add(matrix.getSGTIN());
                     Show();
                 }
             }
@@ -136,12 +139,59 @@ public class task_activity extends ScanActivity implements Observer<Response> {
 
     private void Show()
     {
-        ssccTitle.setVisibility(View.VISIBLE);
-        scaned_list.setVisibility(View.VISIBLE);
-        ArrayAdapter<String> sscc_adapter = new ArrayAdapter<String>(this, R.layout.list_item_pallet_transform, SSCC_list);
-        ArrayAdapter<String> sgtin_adapter = new ArrayAdapter<String>(this, R.layout.list_item_pallet_transform, SGTIN_list);
+        ssccListTitle.setVisibility(View.VISIBLE);
+        sgtinListTitle.setVisibility(View.VISIBLE);
+        ArrayAdapter<String> sscc_adapter = new ArrayAdapter<String>(this, R.layout.array_adapter_list_item, SSCC_list);
+        ArrayAdapter<String> sgtin_adapter = new ArrayAdapter<String>(this, R.layout.array_adapter_list_item, SGTIN_list);
         ssccs_listview.setAdapter(sscc_adapter);
+        ssccs_listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(task_activity.this);
+                dialog.setMessage("Удалить " + ((TextView) view).getText() + " ?");
+                dialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SSCC_list.remove(position);
+                        Show();
+                        return;
+                    }
+                });
+                dialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                });
+                dialog.show();
+                return true;
+            }
+        });
+
         sgtins_listview.setAdapter(sgtin_adapter);
+        sgtins_listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(task_activity.this);
+                dialog.setMessage("Удалить "+ ((TextView) view).getText() + " ?");
+                dialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SGTIN_list.remove(position);
+                        Show();
+                        return;
+                    }
+                });
+                dialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        return;
+                    }
+                });
+                dialog.show();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -158,8 +208,14 @@ public class task_activity extends ScanActivity implements Observer<Response> {
     @OnClick(R.id.btn_send_changes)
     public void onbtn_send_click()
     {
-            viewModel.SaveTaskTransformation(new PalletTransformRequest(OperationType.SaveTsdEntity.toString(),
-                    new palletData(PreferenceController.getInstance().getOwnerId(), "test", SGTIN_list, SSCC_list))).observe(this,this);
+        if (SGTIN_list.isEmpty() && SSCC_list.isEmpty())
+        {
+            Toast toast = Toast.makeText(getApplicationContext(),"Нет отсканированных кодов!", Toast.LENGTH_LONG);
+            toast.show();
+            return;
+        }
+            viewModel.SaveTaskTransformation(new TaskRequest(OperationType.SaveTsdEntity.toString(),
+                    new TaskData(PreferenceController.getInstance().getOwnerId(), null, SGTIN_list, SSCC_list))).observe(this,this);
     }
     private void showAlertDialog (@LayoutRes int alertlayout, String dialogText)
     {

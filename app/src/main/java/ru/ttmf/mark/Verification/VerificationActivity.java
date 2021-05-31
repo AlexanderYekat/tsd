@@ -56,11 +56,6 @@ public class VerificationActivity extends ScanActivity {
         }
     }
 
-    public void onDecodeFail() {
-    Toast toast = Toast.makeText(getApplicationContext(),"Код не отсканирован",Toast.LENGTH_LONG);
-    toast.show();
-    }
-
     public void onDecodeComplete(int symbology, int length, String barcode) {
         successfulScan(barcode);
     }

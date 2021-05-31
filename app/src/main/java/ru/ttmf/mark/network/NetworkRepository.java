@@ -23,8 +23,8 @@ import ru.ttmf.mark.network.model.LoginModel;
 import ru.ttmf.mark.network.model.LoginResponse;
 import ru.ttmf.mark.network.model.OwnerId.OwnerIDRequest;
 import ru.ttmf.mark.network.model.OwnerId.OwnerIDResponse;
-import ru.ttmf.mark.network.model.PalletTransformRequest.PalletTransformRequest;
-import ru.ttmf.mark.network.model.PalletTransformResponse.TaskResponse;
+import ru.ttmf.mark.network.model.TaskTransformationRequest.TaskRequest;
+import ru.ttmf.mark.network.model.TaskTransformationResponse.TaskResponse;
 import ru.ttmf.mark.network.model.PositionData;
 import ru.ttmf.mark.network.model.PositionsResponse;
 import ru.ttmf.mark.network.model.CisRequest.Request;
@@ -60,7 +60,6 @@ import ru.ttmf.mark.network.model.SgtinInfoP.UNPSgtinInfoResponse;
 import ru.ttmf.mark.network.model.SgtinSsccData;
 import ru.ttmf.mark.network.model.SsccInfoP.PVSsccInfoResponse;
 import ru.ttmf.mark.network.model.SsccInfoP.TTNSsccInfoResponse;
-//import ru.ttmf.mark.network.model.SsccInfoResponse;
 import ru.ttmf.mark.network.model.SsccInfoP.UNPSsccInfoResponse;
 import ru.ttmf.mark.preference.PreferenceController;
 
@@ -262,7 +261,7 @@ public class NetworkRepository {
             @Override
             public void onResponse(Call<String> call, retrofit2.Response<String> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    liveData.postValue(new Response(response.body(), QueryType.Login, NetworkStatus.SUCCESS));
+                    liveData.postValue(new Response(response.body(), QueryType.Version, NetworkStatus.SUCCESS));
 
                     int last_version = 0;
                     String t_obj = response.body();
@@ -276,7 +275,7 @@ public class NetworkRepository {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 liveData.postValue(new Response(
-                        QueryType.Login,
+                        QueryType.Version,
                         NetworkStatus.ERROR,
                         "INTERNET ERROR"));
             }
@@ -823,7 +822,7 @@ public class NetworkRepository {
         });
         return liveData;
     }
-    public LiveData<Response> SaveTaskTransformation(PalletTransformRequest request) {
+    public LiveData<Response> SaveTaskTransformation(TaskRequest request) {
         MutableLiveData<Response> liveData = new MutableLiveData<>();
         liveData.postValue(new Response(QueryType.SaveTaskTransformation, NetworkStatus.LOADING));
         apiServiceMarkTsd.SaveTaskTransformation(request).enqueue(new Callback<TaskResponse>() {

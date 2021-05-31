@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".scan_sgtin.sgtin_scan_activity">
+    tools:context=".scan.scan_activity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
@@ -35,61 +35,45 @@
 
             <ProgressBar
                 android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleInverse"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="?android:attr/progressBarStyleInverse"
-                android:layout_marginTop="10dp"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:visibility="gone" />
 
             <TextView
-                android:id="@+id/ssccTitle"
-                android:text="Список SSCC кодов"
+                android:id="@+id/ssccListTitle"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Список SSCC кодов"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:layout_marginTop="5dp" />
+                android:textSize="14sp" />
 
-                <ListView
-                    android:id="@+id/ssccs_listview"
-                    android:layout_marginTop="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp">
-                </ListView>
+            <ListView
+                android:id="@+id/ssccs_listview"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginTop="5dp"></ListView>
 
             <TextView
-                android:id="@+id/scaned_list"
-                android:text="Список SGTIN кодов"
+                android:id="@+id/sgtinListTitle"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
+                android:layout_marginTop="5dp"
+                android:text="Список SGTIN кодов"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:layout_marginTop="5dp" />
+                android:textSize="14sp" />
+
             <ListView
                 android:id="@+id/sgtins_listview"
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="150dp">
-            </ListView>
-
-            <ScrollView
-                android:id="@+id/ScrollViewInfo"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <LinearLayout
-                    android:id="@+id/InfoLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.70"
-                    android:orientation="vertical">
-
-                </LinearLayout>
-            </ScrollView>
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"></ListView>
 
         </LinearLayout>
 
@@ -100,31 +84,25 @@
             android:layout_weight="0.30"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/ll_1_2_1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.50"
-                android:orientation="vertical">
                 <LinearLayout
                     android:id="@+id/ll_1_2_2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.50"
                     android:orientation="horizontal">
-                <Button
-                    android:id="@+id/btn_send_changes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginRight="30dp"
-                    android:background="@drawable/button_selector"
-                    android:text="Отправить"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/black" />
+
+                    <Button
+                        android:id="@+id/btn_send_changes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginRight="30dp"
+                        android:background="@drawable/button_selector"
+                        android:text="Отправить"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp" />
                 </LinearLayout>
-            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".scan_sgtin.sgtin_scan_activity">
+    tools:context=".scan.scan_activity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar2"
@@ -53,17 +53,20 @@
                 android:textSize="14sp"
                 android:layout_marginTop="5dp" />
             <TextView
-                android:id="@+id/sscc"
+                android:id="@+id/currentSSCC"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="40dp"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                style="?android:listSeparatorTextViewStyle"/>
+                android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/common_google_signin_btn_text_light_disabled"/>
 
             <TextView
-                android:id="@+id/scaned_list"
+                android:id="@+id/scannedListTitle"
                 android:text="Список SGTIN кодов"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"

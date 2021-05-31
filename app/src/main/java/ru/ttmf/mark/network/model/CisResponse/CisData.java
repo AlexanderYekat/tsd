@@ -33,7 +33,7 @@ public class CisData
             }
             return list;
         }
-        else{
+        else {
             return cisInfo.GetBasicInfo();
         }
     }

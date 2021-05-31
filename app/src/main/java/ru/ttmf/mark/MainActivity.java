@@ -78,7 +78,8 @@ public class MainActivity
         //int last_version = 0;
         //int check_version_attempt_count = 30;
 
-        //NetworkRepository.getInstance().version();
+        NetworkRepository.getInstance().version();
+
         /*Object t_obj = version.getValue();
         if (t_obj != null) {
             last_version = (int) t_obj;
@@ -99,9 +100,12 @@ public class MainActivity
             }
         }*/
 
-        /*if (cur_version < last_version) {
+
+        /*
+        if (cur_version < last_version) {
             showDialog("Вышла новая версия программы!\nНачать скачивание?");
-        }*/
+        }
+        */
 
     }
 
@@ -211,7 +215,8 @@ public class MainActivity
         hideKeyboard();
     }
 
-    /*private void showDialog(String message) {
+    /*
+    private void showDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
@@ -222,9 +227,13 @@ public class MainActivity
             dialog.dismiss();
         });
         builder.show();
-    }*/
+    }
+     */
 
-    /*private void startDownload() {
+
+
+    /*
+    private void startDownload() {
         final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
         try {
             try {
@@ -237,7 +246,8 @@ public class MainActivity
                     Intent(Intent.ACTION_VIEW, Uri.parse("https://office2.ttmf.ru/ProgramLogs/api/TSDgetapk"));
             startActivity(browserIntent);
         }
-    }*/
+    }
+     */
 
     /*@Override
     public void onChanged(@Nullable Response response) {

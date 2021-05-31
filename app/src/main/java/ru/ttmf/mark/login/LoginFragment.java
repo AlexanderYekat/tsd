@@ -106,7 +106,8 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
     private void showDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage(message);
-        /*.setPositiveButton(R.string.yes, (dialog, which) -> {
+        /*
+        builder.setPositiveButton(R.string.yes, (dialog, which) -> {
             dialog.dismiss();
             startDownload();
         });
@@ -116,14 +117,19 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
         builder.show();
     }
 
-    /*private void startDownload() {
+
+    /*
+    private void startDownload() {
         try {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://office2.ttmf.ru/ProgramLogs/api/TSDgetapk"));
             startActivity(browserIntent);
         }
         catch (Exception ex) {
         }
-    }*/
+    }
+     */
+
+
 
     @OnClick(R.id.btn_settings)
     public void onSettingsButtonClick() {

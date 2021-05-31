@@ -156,10 +156,10 @@
                             android:layout_marginRight="50dp"
                             android:background="@drawable/button_selector"
                             android:text="@string/logout"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/logs"
-                            />
+                            app:layout_constraintTop_toBottomOf="@id/logs" />
                 </android.support.constraint.ConstraintLayout>
         </ScrollView>
 </android.support.constraint.ConstraintLayout>
