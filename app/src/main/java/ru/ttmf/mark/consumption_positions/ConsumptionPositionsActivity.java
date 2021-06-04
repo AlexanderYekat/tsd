@@ -85,8 +85,6 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,13 +105,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         viewModel.searchPositions(PreferenceController.getInstance().getToken(), id).observe(this, this);
         scanned.setText(getString(R.string.cipher, cipherText));
         seria.setText(getString(R.string.seria, seriaText));
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-        });
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
         totalConsumptionPositionsTextView = (TextView) findViewById(R.id.consumptionPositions);
         scanPositions = new ArrayList<>();

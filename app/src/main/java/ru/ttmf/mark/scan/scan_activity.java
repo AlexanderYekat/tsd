@@ -3,7 +3,6 @@ package ru.ttmf.mark.scan;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -25,7 +24,6 @@ import butterknife.OnClick;
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.ScanActivity;
 import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
-import ru.ttmf.mark.barcode.OnDecodeCompleteListener;
 import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.Response;
@@ -61,8 +59,6 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
     @BindView(R.id.viewpager)
     ViewPager viewPager;
 
-
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     private int current_sgtin_number;
     private scan_activity_model viewModel;
 
@@ -74,14 +70,8 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
         initToolbar(toolbar2, getString(R.string.scan_name));
         viewModel = ViewModelProviders.of(this)
                 .get(scan_activity_model.class);
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-        });
 
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
 
         current_sgtin_number = 0;
@@ -217,7 +207,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
                         "в System.Net.Http.HttpClient.PostAsync(Uri requestUri, HttpContent content, CancellationToken cancellationToken)\r\n   " +
                         "в MarkProducts.DAL.Helpers.TrueApiHelper.GetCisesInfoList(Int32 ownerId, IEnumerable`1 cises) " +
                         "в C:\\Projects\\MarkProducts\\MarkProducts\\DAL\\Helpers\\TrueApiHelper.cs:строка 153")) {
-                    showErrorDialog("Используйте протокол безопасности TLS 1.2!");  // Ошибка при неверном ownerId
+                    showErrorDialog("Используйте протокол безопасности TLS 1.2!");  // Ошибка при неправильном ownerId
                     break;
                 }
                 showErrorDialog(response.getError());
@@ -229,8 +219,8 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
                 unregisterReceiver(intentBarcodeDataReceiver);
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -271,7 +261,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
         builder.show();
     }
 
-    private void refresh() // Заного отправляет запрос для кодов, по которым пришла неполная информация
+    private void refresh() // Заново отправляет запрос для кодов, по которым пришла неполная информация
     {
         requestdata request = new requestdata((PreferenceController.getInstance().getOwnerId()));
         for (CisData data:PreferenceController.getInstance().CisesInfoList)
@@ -283,4 +273,5 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
         }
         viewModel.getCisInfo(request).observe(this,this);
     }
+
 }

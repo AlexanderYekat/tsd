@@ -48,7 +48,6 @@ public class MainActivity
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     ConsumptionSearchViewModel searchViewModel;
 
     @Override
@@ -61,11 +60,6 @@ public class MainActivity
         /*intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver((type, length, barcode)
               -> searchViewModel.setSearchTerm(barcode));*/
 
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-            }
-        });
 
         if (TextUtils.isEmpty(PreferenceController.getInstance().getToken())) {
             showFragment(new LoginFragment(), getString(R.string.enter), true, false);
@@ -111,7 +105,8 @@ public class MainActivity
 
     @Override
     protected void onStart() {
-        registerReceiver(intentBarcodeDataReceiver, new IntentFilter("DATA_SCAN"));
+        InitializeReceiver();
+        registerReceiver(intentBarcodeDataReceiver, intentFilter);
         super.onStart();
     }
 
@@ -213,6 +208,11 @@ public class MainActivity
     public void onBackPressed() {
         super.onBackPressed();
         hideKeyboard();
+    }
+
+    @Override
+    protected void onDecodeComplete(int type, int length, String barcode) {
+
     }
 
     /*

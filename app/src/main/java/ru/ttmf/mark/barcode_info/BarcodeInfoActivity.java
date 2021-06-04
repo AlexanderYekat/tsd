@@ -31,4 +31,9 @@ public class BarcodeInfoActivity extends ScanActivity {
             }
         }
     }
+
+    @Override
+    protected void onDecodeComplete(int type, int length, String barcode) {
+
+    }
 }

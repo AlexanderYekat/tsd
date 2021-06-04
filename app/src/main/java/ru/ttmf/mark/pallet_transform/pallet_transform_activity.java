@@ -60,7 +60,6 @@ public class pallet_transform_activity extends ScanActivity implements Observer<
     @BindView(R.id.add)
     RadioButton addButton;
 
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     private pallet_transform_activity_model viewModel;
     private String currentSSCC;
     private ArrayList<String> SGTIN_list = new ArrayList<>();
@@ -73,16 +72,9 @@ public class pallet_transform_activity extends ScanActivity implements Observer<
         initToolbar(toolbar2, getString(R.string.pallet_transform_name));
         viewModel = ViewModelProviders.of(this)
                 .get(pallet_transform_activity_model.class);
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-
-        });
-        addButton.setChecked(true);
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
+        addButton.setChecked(true);
     }
     public void initToolbar(android.support.v7.widget.Toolbar toolbar, String title) {
         if (toolbar != null) {
@@ -195,8 +187,8 @@ public class pallet_transform_activity extends ScanActivity implements Observer<
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
                 unregisterReceiver(intentBarcodeDataReceiver);
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);

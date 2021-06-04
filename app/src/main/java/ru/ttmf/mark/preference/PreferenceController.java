@@ -30,7 +30,7 @@ public class PreferenceController {
     private static final String cur_serial = "cur_serial";
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
-    private static final Integer cur_version = 140;
+    private static final Integer cur_version = 141;
 
     //proxy fields
     private static final String PROXY_ADDRESS = "address";

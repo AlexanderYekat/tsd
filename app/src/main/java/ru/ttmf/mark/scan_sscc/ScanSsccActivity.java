@@ -56,7 +56,6 @@ public class ScanSsccActivity extends ScanActivity {
 
     private float current_screenBrightness;
     private int current_sscc_number;
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +65,7 @@ public class ScanSsccActivity extends ScanActivity {
         ButterKnife.bind(this);
         initToolbar(toolbar2, getString(R.string.scan_sscc2));
 
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-        });
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
 
         current_sscc_number = 0;
@@ -163,8 +156,8 @@ public class ScanSsccActivity extends ScanActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
                 unregisterReceiver(intentBarcodeDataReceiver);
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -25,7 +25,6 @@ public class VerificationActivity extends ScanActivity {
     @BindView(R.id.toolbar2)
     Toolbar toolbar2;
 
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     private AlertDialog alert;
 
 
@@ -35,13 +34,7 @@ public class VerificationActivity extends ScanActivity {
         setContentView(R.layout.activity_verification);
         ButterKnife.bind(this);
         initToolbar(toolbar2, getString(R.string.verification_name));
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-        });
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
 
     }
@@ -84,8 +77,8 @@ public class VerificationActivity extends ScanActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
                 unregisterReceiver(intentBarcodeDataReceiver);
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);

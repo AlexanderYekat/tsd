@@ -54,7 +54,6 @@ public class task_activity extends ScanActivity implements Observer<Response> {
     @BindView(R.id.sgtinListTitle)
     TextView sgtinListTitle;
 
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     private task_activity_model viewModel;
     private ArrayList<String> SSCC_list = new ArrayList<>();
     private ArrayList<String> SGTIN_list = new ArrayList<>();
@@ -67,14 +66,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
         initToolbar(toolbar2, getString(R.string.task_name));
         viewModel = ViewModelProviders.of(this)
                 .get(task_activity_model.class);
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-
-        });
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
     }
     public void initToolbar(android.support.v7.widget.Toolbar toolbar, String title) {
@@ -198,8 +190,8 @@ public class task_activity extends ScanActivity implements Observer<Response> {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
                 unregisterReceiver(intentBarcodeDataReceiver);
+                onBackPressed();
                 break;
         }
         return super.onOptionsItemSelected(item);

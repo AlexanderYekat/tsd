@@ -10,6 +10,9 @@ public class DataWedgeConstants {
     public static final String EXTRA_PARAMETER 					= "com.hht.emdk.datawedge.api.EXTRA_PARAMETER";
     public static final String CODE_PARAMETER 					= "com.hht.emdk.datawedge.api.CODE_PARAMETER";
 
+    public static final String EXTRA_BARCODE_DECODING_SYMBOLE 	= "EXTRA_BARCODE_DECODING_SYMBOLE";
+    public static final String EXTRA_BARCODE_DECODING_DATA 					= "EXTRA_BARCODE_DECODING_DATA";
+
     public static final String START_SCANNING 					= "START_SCANNING";
     public static final String STOP_SCANNING 					= "STOP_SCANNING";
     public static final String DISABLE_PLUGIN 					= "DISABLE_PLUGIN";

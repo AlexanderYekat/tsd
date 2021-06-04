@@ -45,7 +45,6 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
     //@BindView(R.id.scrollView)
     //ScrollView scrollView;
 
-    private BarcodeDataBroadcastReceiver intentBarcodeDataReceiver;
     private activity_sgtin_sscc_info_view_model viewModel;
     private ProgressDialog progressDialog;
     private TextView textView2;
@@ -65,13 +64,7 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
         viewModel = ViewModelProviders.of(this)
                 .get(activity_sgtin_sscc_info_view_model.class);
 
-        IntentFilter intentFilter = new IntentFilter("DATA_SCAN");
-        intentBarcodeDataReceiver = new BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                onDecodeComplete(type, length, barcode);
-            }
-        });
+        InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
     }
 
@@ -119,6 +112,7 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                unregisterReceiver(intentBarcodeDataReceiver);
                 onBackPressed();
                 break;
         }
