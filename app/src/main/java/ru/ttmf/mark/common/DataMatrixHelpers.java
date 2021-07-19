@@ -1,6 +1,42 @@
 package ru.ttmf.mark.common;
 
 public class DataMatrixHelpers {
+    public static String replaceGS(String code)
+    {
+        for (int i = 0; i<code.length(); i++)
+        {
+            if (code.charAt(i) == 29)
+            {
+                code = code.substring(0,i).concat("u001d").concat(code.substring(i+1));
+                break;
+            }
+        }
+        return code;
+    }
+    public static String removeGS(String code)
+    {
+        for (int i = 0; i<code.length(); i++)
+        {
+            if (code.charAt(i) == 29)
+            {
+                code = code.substring(0,i).concat(code.substring(i+1));
+                break;
+            }
+        }
+        return code;
+    }
+    public static String removeGSandTail(String code)
+    {
+        for (int i = 0; i<code.length(); i++)
+        {
+            if (code.charAt(i) == 29)
+            {
+                code = code.substring(0,i);
+                break;
+            }
+        }
+        return code;
+    }
     public static void splitStr(DataMatrix dataMatrix, String data, int delimiter) {
 
         if (data.length() > 2) {

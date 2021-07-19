@@ -296,6 +296,51 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
 
         updateScannedPositions();
     }
+    /*
+    private void DirectScan(List<Position> posList, DataMatrix matrix, String code) {
+
+        Toast toast = Toast.makeText(getApplicationContext(),
+                "Неверный штрихкод!", Toast.LENGTH_SHORT);
+
+        int start_count = scannedPositions;
+        String sgtin;
+        for (int i = 0; i < posList.size(); i++) {
+            //TODO: 20?
+            if (positionsAdapter.getItems().get(i).getSgTin().length()!=27) {
+                sgtin = DataMatrixHelpers.replaceGS(code);
+            }
+            else {
+                sgtin = matrix.SGTIN();
+            }
+            if (positionsAdapter.getItems().get(i).getSgTin().equals(sgtin) || positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SSCC())) {
+                scannedPositions++;
+                if (matrix.SGTIN() == null) {
+                    positionsAdapter.removeItem(matrix.SSCC());
+                    reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
+                } else {
+                    positionsAdapter.removeItem(sgtin);
+                    //TODO: для чего sgtin и code?
+                    //TODO: сделать чтобы не сломать для аптек
+                    //TODO: GS только 1?
+                    //reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
+                    reverseDirectPosition.add(new PositionsSaveModel(DataMatrixHelpers.removeGSandTail(code), code, 1));
+                }
+                if (positionsAdapter.getItemCount() == 0) {
+                    showSaveDialog(getString(R.string.scan_finish));
+                }
+            }
+        }
+
+        if (start_count == scannedPositions) {
+            toast.show();
+            //playSound(R.raw.s3);
+            //GetSgtinSsccInfo(matrix);
+        }
+
+        updateScannedPositions();
+    }
+
+     */
 
     private void ReverseScan(List<Position> posList, DataMatrix matrix, String code) {
         if (posList.size() > 0) {

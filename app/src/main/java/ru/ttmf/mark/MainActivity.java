@@ -8,9 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -27,6 +29,7 @@ import com.google.gson.annotations.SerializedName;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import ru.ttmf.mark.Helpers.Helpers;
 import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
 import ru.ttmf.mark.barcode.OnDecodeCompleteListener;
 import ru.ttmf.mark.common.Response;
@@ -50,6 +53,7 @@ public class MainActivity
     Toolbar toolbar;
     ConsumptionSearchViewModel searchViewModel;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +104,12 @@ public class MainActivity
             showDialog("Вышла новая версия программы!\nНачать скачивание?");
         }
         */
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return;
+        }
+        else {
+            getStoragePermission();
+        }
 
     }
 
@@ -108,6 +118,11 @@ public class MainActivity
         InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
         super.onStart();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void getStoragePermission() {
+        Helpers.getStoragePermission(this);
     }
 
     @Override

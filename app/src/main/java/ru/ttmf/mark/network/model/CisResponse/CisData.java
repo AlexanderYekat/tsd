@@ -18,12 +18,14 @@ public class CisData
     @SerializedName("errorCode")
     public String errorCode;
 
+
+    //TODO: разобраться что убрать и убрать
     public ArrayList<listview_item> GetBasicInfo()
     {
         if(errorMessage!=null) {
             ArrayList list = new ArrayList<listview_item>();
-            list.add(new listview_item(cisInfo.cis, R.string.cis));
-            list.add(new listview_item(cisInfo.gtin, R.string.gtin));
+            list.add(new listview_item(cisInfo.GetCis(), R.string.cis));
+            list.add(new listview_item(cisInfo.GetGtin(), R.string.gtin));
             if (errorCode.equals("401")) {
                 list.add(new listview_item("Для получения информации выполните авторизацию", R.string.error));
             }

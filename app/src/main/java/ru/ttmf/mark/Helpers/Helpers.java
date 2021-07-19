@@ -1,7 +1,12 @@
 package ru.ttmf.mark.Helpers;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -58,6 +63,22 @@ public class Helpers {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static void getStoragePermission(Activity activity) {
+        if (activity.checkSelfPermission(
+                Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            // показать сообщение о необходимости получить права
+            if (activity.shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+            } else {
+                // запрос на доступ
+                activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
         }
     }
 }

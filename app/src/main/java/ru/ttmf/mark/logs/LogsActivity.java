@@ -1,8 +1,10 @@
 package ru.ttmf.mark.logs;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.FileUtils;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -26,6 +28,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import ru.ttmf.mark.Helpers.Helpers;
 import ru.ttmf.mark.R;
 
 import static ru.ttmf.mark.Helpers.Helpers.JsonBeautify;
@@ -49,11 +52,9 @@ public class LogsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_logs);
         ButterKnife.bind(this);
         initToolbar(toolbar, "Ранее сканированные накладные");
-
         expandableListTitle = getScanLogFilesTitle();
         expandableListDetail = getScanLogFilesTitleDetails();
         expListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListDetail);
-
         expListView.setAdapter(expListAdapter);
     }
 

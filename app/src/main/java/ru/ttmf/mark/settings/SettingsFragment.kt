@@ -20,6 +20,7 @@ class SettingsFragment : BaseFragment() {
     private var url = PreferenceController.getInstance().url
     private var protocol = PreferenceController.getInstance().secureProtocol
     private var isRememberAuth = PreferenceController.getInstance().isRememberAuth
+    private var isMarkirovkaSelected = PreferenceController.getInstance().isMarkirovkaSelected
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,6 +36,7 @@ class SettingsFragment : BaseFragment() {
 
         et_service_url.setText(url)
         cb_remember_auth.isChecked = isRememberAuth
+        cb_markirovka.isChecked = isMarkirovkaSelected;
 
         when (protocol) {
             TLS_1_0.javaName() -> rb_tls_1_0.isChecked = true
@@ -64,11 +66,13 @@ class SettingsFragment : BaseFragment() {
                 }
 
                 val isRememberAuth = cb_remember_auth.isChecked
+                val isMarkirovkaSelected = cb_markirovka.isChecked
 
                 PreferenceController.getInstance().apply {
                     this.url = url
                     this.secureProtocol = protocol
                     this.isRememberAuth = isRememberAuth
+                    this.isMarkirovkaSelected = isMarkirovkaSelected
 
                     if (!isRememberAuth) {
                         login = ""

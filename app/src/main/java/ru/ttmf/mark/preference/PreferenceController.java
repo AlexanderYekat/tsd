@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.TlsVersion;
+//import ru.ttmf.mark.cspHelper.cspHelper;
 import ru.ttmf.mark.network.model.CisResponse.CisData;
 import ru.ttmf.mark.scan_sscc.Sscc_item;
 
@@ -20,6 +21,7 @@ public class PreferenceController {
     private static final String URL = "url";
     private static final String PROTOCOL = "secure_protocol";
     private static final String REMEMBER_AUTH = "remember_auth";
+    private static final String MARKIROVKA = "markirovka";
     private static final String LOGIN = "login";
     private static final String PASSWORD = "password";
     private static final String VERSION = "version";
@@ -30,7 +32,7 @@ public class PreferenceController {
     private static final String cur_serial = "cur_serial";
     private static final Boolean not_finish = false;
     private static final Boolean unnecessary_scanned = false;
-    private static final Integer cur_version = 141;
+    private static final Integer cur_version = 142;
 
     //proxy fields
     private static final String PROXY_ADDRESS = "address";
@@ -152,6 +154,14 @@ public class PreferenceController {
         return sharedPreferences.getBoolean(REMEMBER_AUTH, true);
     }
 
+    public void setMarkirovkaSelected(Boolean markirovka) {
+        sharedPreferences.edit().putBoolean(MARKIROVKA, markirovka).apply();
+    }
+
+    public boolean isMarkirovkaSelected() {
+        return sharedPreferences.getBoolean(MARKIROVKA, false);
+    }
+
     public void setLogin(String login) {
         sharedPreferences.edit().putString(LOGIN, login).apply();
     }
@@ -169,6 +179,9 @@ public class PreferenceController {
     }
 
 
+    /**
+     * Удаление данных при выходе из аккаунта
+     */
     public void clear() {
         setUserId("");
         setUserName("");
@@ -176,6 +189,7 @@ public class PreferenceController {
         setOwnerId(0);
         sscc_items_list.clear();
         CisesInfoList.clear();
+        //cspHelper.getInstance().certDelete();
     }
 
     public String getProxyAddress() {

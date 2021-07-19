@@ -17,18 +17,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.ScanActivity;
-import ru.ttmf.mark.barcode.BarcodeDataBroadcastReceiver;
 import ru.ttmf.mark.common.DataMatrix;
 import ru.ttmf.mark.common.DataMatrixHelpers;
 import ru.ttmf.mark.common.Response;
 import ru.ttmf.mark.network.model.CisRequest.requestdata;
 import ru.ttmf.mark.network.model.CisResponse.CisData;
+import ru.ttmf.mark.network.model.SgtinInfoP.TTNSgtinInfo;
+import ru.ttmf.mark.network.model.SsccInfo;
 import ru.ttmf.mark.preference.PreferenceController;
 
 public class scan_activity extends ScanActivity implements Observer<Response> {
@@ -61,6 +63,8 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
 
     private int current_sgtin_number;
     private scan_activity_model viewModel;
+    private String groupType = "milk";
+    private boolean isMarkirovka;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +77,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
 
         InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
-
+        isMarkirovka = PreferenceController.getInstance().isMarkirovkaSelected();
         current_sgtin_number = 0;
         if (PreferenceController.getInstance().CisesInfoList.size() > 0)
         {
@@ -81,7 +85,16 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
             initTabLayout(0);
             current_sgtin_number = 1;
         }
+
+        if (!isMarkirovka) {
+            btn_clear.setVisibility(View.GONE);
+            btn_left.setVisibility(View.GONE);
+            btn_right.setVisibility(View.GONE);
+            textView_count.setVisibility(View.GONE);
+        }
+
     }
+
 
     public void initTabLayout(int position) {
         tabLayout.setupWithViewPager(viewPager);
@@ -96,7 +109,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
 
         if(PreferenceController.getInstance().CisesInfoList.get(position).errorMessage==null) {
 
-            if (PreferenceController.getInstance().CisesInfoList.get(position).cisInfo.child!=null) {
+            if (PreferenceController.getInstance().CisesInfoList.get(position).cisInfo.GetChild()!=null) {
                 scan_viewpage_fragment_child fragment_child_info = new scan_viewpage_fragment_child();
                 fragment_child_info.setArguments(bundle);
                 adapter.addFragment(fragment_child_info, "Содержимое");
@@ -110,7 +123,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
             fragment_owner_info.setArguments(bundle);
             adapter.addFragment(fragment_owner_info, "Владелец");
 
-            if (PreferenceController.getInstance().CisesInfoList.get(position).cisInfo.prVetDocument!=null) {
+            if (PreferenceController.getInstance().CisesInfoList.get(position).cisInfo.GetPrVetDocument()!=null) {
                 scan_viewpage_fragment_prVet_info fragment_prVet_info = new scan_viewpage_fragment_prVet_info();
                 fragment_prVet_info.setArguments(bundle);
                 adapter.addFragment(fragment_prVet_info, "Вет. документ");
@@ -143,34 +156,75 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
             DataMatrixHelpers.splitStr(matrix, code, 29);
             Toast toast;
 
-                    boolean find = false;
-                    for (CisData var : PreferenceController.getInstance().CisesInfoList)
+            boolean find = false;
+            if (isMarkirovka) {
+                for (CisData var : PreferenceController.getInstance().CisesInfoList) {
+                    if (var.cisInfo.GetCis().equals(matrix.getSGTIN()) || var.cisInfo.GetCis().equals(matrix.getSSCC())) // Проверка, был ли код отсканирован ранее
                     {
-                        if (var.cisInfo.cis.equals(matrix.getSGTIN()) || var.cisInfo.cis.equals(matrix.getSSCC())) // Проверка, был ли код отсканирован ранее
-                        {
-                            if(var.errorMessage!=null)
-                            {
-                                PreferenceController.getInstance().CisesInfoList.remove(var); // Если код уже был отсканирован, но не корректно
-                                // (напр. не была выполнена авторизация - информация пришла неполная) то он удаляется, чтобы отправить запрос еще раз
-                                break;
-                            }
-                            find = true;
-                            toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG); // Если код ранее был корректно отсканирован, запрос не отправляется
-                            toast.show();
+                        if (var.errorMessage != null) {
+                            PreferenceController.getInstance().CisesInfoList.remove(var); // Если код уже был отсканирован, но не корректно
+                            // (напр. не была выполнена авторизация - информация пришла неполная) то он удаляется, чтобы отправить запрос еще раз
                             break;
                         }
+                        find = true;
+                        toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG); // Если код ранее был корректно отсканирован, запрос не отправляется
+                        toast.show();
+                        break;
                     }
+                }
+            }
 
-                    if (!find) {
-                        progressBar.setVisibility(ProgressBar.VISIBLE);
-                        if (matrix.SSCC()!=null)
-                        {
-                            viewModel.getCisInfo(new requestdata(PreferenceController.getInstance().getOwnerId(), matrix.getSSCC())).observe(this,this);
-                        }
-                        else if (matrix.SGTIN()!=null){
-                            viewModel.getCisInfo(new requestdata(PreferenceController.getInstance().getOwnerId(), matrix.getSGTIN())).observe(this,this);
-                        }
+            if (!find) {
+                progressBar.setVisibility(ProgressBar.VISIBLE);
+                ArrayList<String> request = new ArrayList<>();
+                //if (code.startsWith("04") && code.length()==18) {
+                    //viewModel.getTTNSsccInfo(PreferenceController.getInstance().getToken(), code).observe(this, this);
+                    //return;
+                //}
+                //else
+                    if (matrix.SSCC()!=null) {
+                    if (!isMarkirovka) {
+                        progressBar.setVisibility(ProgressBar.GONE);
+                        //viewModel.getTTNSsccInfo(PreferenceController.getInstance().getToken(), matrix.SSCC()).observe(this, this);
+                        //TODO: что нибудь показать
+                        return;
                     }
+                    request.add(matrix.getSSCC());
+                    viewModel.getCisInfo(new requestdata(PreferenceController.getInstance().getOwnerId(), matrix.getSSCC())).observe(this,this);
+                    //TODO: заменить после добавления эцп
+                    /*viewModel.GetCises(
+                            request,
+                            groupType,
+                            getSharedPreferences("preferences", MODE_PRIVATE).
+                                    getString("token", "")).
+                            observe(this,this);
+
+                     */
+                }
+                else if (matrix.SGTIN()!=null){
+                    if (!isMarkirovka) {
+                        viewModel.getTTNSgtinInfo(PreferenceController.getInstance().getToken(), matrix.SGTIN()).observe(this, this);
+                        return;
+                    }
+                    request.add(matrix.getSGTIN());
+                    viewModel.getCisInfo(new requestdata(PreferenceController.getInstance().getOwnerId(), matrix.getSGTIN())).observe(this,this);
+                    //TODO: заменить после добавления эцп
+                    /*viewModel.GetCises(
+                            request,
+                            groupType,
+                            getSharedPreferences("preferences", MODE_PRIVATE).
+                                    getString("token", "")).
+                            observe(this,this);
+
+                     */
+                }
+                else {
+                    progressBar.setVisibility(ProgressBar.GONE);
+                    Toast toast2 = Toast.makeText(getApplicationContext(),"Некорректный штрихкод!", Toast.LENGTH_SHORT);
+                    toast2.show();
+                    return;
+                }
+            }
         } catch (Exception ex) {
             Toast toast = Toast.makeText(getApplicationContext(),"Некорректный штрихкод!", Toast.LENGTH_SHORT);
             toast.show();
@@ -194,8 +248,38 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
                         textView_count.setText(PreferenceController.getInstance().CisesInfoList.size() + "/" + PreferenceController.getInstance().CisesInfoList.size());
                         current_sgtin_number = PreferenceController.getInstance().CisesInfoList.size();
                         break;
+                    case GetTTNSgtinInfo:
+                        progressBar.setVisibility(ProgressBar.GONE);
+                        List<TTNSgtinInfo> sgtinInfoList = (List<TTNSgtinInfo>) response.getObject();
+                        //viewModel.setSgtinInfo(sgtinInfoList);
+                        if (sgtinInfoList.size() > 0) {
+                            showErrorBarcodeInfo("Номер документа: " + sgtinInfoList.get(0).getTtnId() + "\n" +
+                                    "Дата документа: " + sgtinInfoList.get(0).getTtnDate() + "\n" +
+                                    "Наименование склада: " + sgtinInfoList.get(0).getSkladName() + "\n" +
+                                    "PartyId: " + sgtinInfoList.get(0).getParty() + "\n" +
+                                    "Шифр: " + sgtinInfoList.get(0).getShifr() + "\n" +
+                                    "SGTIN: " + sgtinInfoList.get(0).getSgtin() + "\n" +
+                                    "SSCC: " + sgtinInfoList.get(0).getSscc() + "\n" +
+                                    "Статус сканирования: " + sgtinInfoList.get(0).getTsdNaim() + "\n" +
+                                    "Статус акцептования: " + sgtinInfoList.get(0).getAcceptNaim() + "\n" +
+                                    "Статус товара: " + sgtinInfoList.get(0).getOstNaim() + "\n" +
+                                    "Тип акцептования: " + sgtinInfoList.get(0).getMarkAcceptTypeNaim() + "\n");
+                        }
+                        break;
+                    case GetTTNSsccInfo:
+                        progressBar.setVisibility(ProgressBar.GONE);
+                        List<SsccInfo> ssccInfoList = (List<SsccInfo>) response.getObject();
+                        if (ssccInfoList.size() > 0) {
+                            showErrorBarcodeInfo("Номер документа: " + ssccInfoList.get(0).getUnpDocId() + "\n" +
+                                    "SSCC: " + ssccInfoList.get(0).getSscc() + "\n" +
+                                    "Дата документа: " + ssccInfoList.get(0).getUnpDate() + "\n" +
+                                    "Вид операции: " + ssccInfoList.get(0).getAction() + "\n" +
+                                    "Статус операции: " + ssccInfoList.get(0).getRezult() + "\n");
+                            break;
+                        }
                 }
                 break;
+            //TODO: убрать после добавления эцп
             case ERROR:
                 progressBar.setVisibility(ProgressBar.GONE);
                 if (response.getError().equals("System.InvalidOperationException: Указан недопустимый URI запроса. " +
@@ -268,10 +352,20 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
         {
             if(data.errorCode!=null)
             {
-                request.add(data.cisInfo.cis);
+                request.add(data.cisInfo.GetCis());
             }
         }
         viewModel.getCisInfo(request).observe(this,this);
+    }
+
+    protected void showErrorBarcodeInfo(String text) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(text);
+        builder.setTitle(R.string.barcode_info);
+        builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.show();
     }
 
 }

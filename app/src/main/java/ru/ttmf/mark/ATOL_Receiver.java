@@ -14,12 +14,7 @@ public class ATOL_Receiver extends ReceiverCreator {
 
     @Override
     public ATOL_BarcodeDataBroadcastReceiver getReceiver() {
-        return new ATOL_BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                listener.onDecodeCompleted(type, length, barcode);
-            }
-        });
+        return new ATOL_BarcodeDataBroadcastReceiver(listener);
     }
 
     @Override

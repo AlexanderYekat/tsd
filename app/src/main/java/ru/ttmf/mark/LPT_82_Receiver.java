@@ -14,12 +14,7 @@ public class LPT_82_Receiver extends ReceiverCreator {
 
     @Override
     public LPT_82_BarcodeDataBroadcastReceiver getReceiver() {
-        return new LPT_82_BarcodeDataBroadcastReceiver(new OnDecodeCompleteListener() {
-            @Override
-            public void onDecodeCompleted(int type, int length, String barcode) {
-                listener.onDecodeCompleted(type, length, barcode);
-            }
-        });
+        return new LPT_82_BarcodeDataBroadcastReceiver(listener);
     }
 
     @Override
