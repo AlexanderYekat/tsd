@@ -72,6 +72,7 @@ public abstract class ScanActivity extends AppCompatActivity {
     {
         String myDeviceModel = android.os.Build.MODEL;
         switch (myDeviceModel) {
+            /*
             case "ATOL Smart.Lite":
                 receiver = new ATOL_Receiver(new OnDecodeCompleteListener() {
                 @Override
@@ -80,6 +81,7 @@ public abstract class ScanActivity extends AppCompatActivity {
                 }
             });
             break;
+             */
             case "LPT82":
                 receiver = new LPT_82_Receiver(new OnDecodeCompleteListener() {
                 @Override

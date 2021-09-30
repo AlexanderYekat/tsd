@@ -12,6 +12,7 @@ import ru.ttmf.mark.R;
 import ru.ttmf.mark.network.model.Invoice;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,6 +28,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
     public InvoiceAdapter(List<Invoice> invoices, OnInvoiceClickListener listener) {
         this.invoices.addAll(invoices);
         this.listener = listener;
+        sortList();
     }
 
     @NonNull
@@ -86,6 +88,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
     public void addData(List<Invoice> invoices){
         this.invoices.addAll(invoices);
         notifyDataSetChanged();
+        sortList();
     }
 
     @Override
@@ -121,5 +124,9 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
 
     public interface OnInvoiceClickListener {
         void onInvoiceClick(Invoice invoice);
+    }
+
+    private void sortList() {
+        Collections.sort(this.invoices);
     }
 }

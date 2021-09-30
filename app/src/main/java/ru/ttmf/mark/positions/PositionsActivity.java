@@ -305,7 +305,6 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         int start_count = scannedPositions;
         String sgtin;
         for (int i = 0; i < posList.size(); i++) {
-            //TODO: 20?
             if (positionsAdapter.getItems().get(i).getSgTin().length()!=27) {
                 sgtin = DataMatrixHelpers.replaceGS(code);
             }
@@ -319,9 +318,6 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                     reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
                 } else {
                     positionsAdapter.removeItem(sgtin);
-                    //TODO: для чего sgtin и code?
-                    //TODO: сделать чтобы не сломать для аптек
-                    //TODO: GS только 1?
                     //reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
                     reverseDirectPosition.add(new PositionsSaveModel(DataMatrixHelpers.removeGSandTail(code), code, 1));
                 }

@@ -56,17 +56,21 @@ public class HomeFragment extends BaseFragment {
     }
     */
 
+    /*
     @OnClick(R.id.pallet_transform)
     public void onPalletTransformClick() {
         Intent intent = new Intent(getContext(), pallet_transform_activity.class);
         startActivity(intent);
     }
+     */
 
+    /*
     @OnClick(R.id.task)
     public void onTaskClick() {
         Intent intent = new Intent(getContext(), task_activity.class);
         startActivity(intent);
     }
+     */
 
     @OnClick(R.id.scan_sgtin)
     public void onScanSgtinClick() {

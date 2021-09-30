@@ -213,6 +213,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         rvPositions.setLayoutManager(linearLayoutManager);
         positionsAdapter = new ConsumptionPositionsAdapter(positionList);
         rvPositions.setAdapter(positionsAdapter);
+        //rvPositions.scroll
     }
 
     private void successfulScan(String code) {

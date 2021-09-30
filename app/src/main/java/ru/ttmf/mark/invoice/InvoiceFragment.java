@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +47,7 @@ public class InvoiceFragment extends BaseFragment implements
     private static final int POSITIONS_SCANNED = 12;
     SearchViewModel searchViewModel;
     InvoiceAdapter adapter;
+    private Parcelable scrollPosition;
 
     public static InvoiceFragment newInstance(DataType type, ArrayList<Invoice> invoices, String code) {
         Bundle args = new Bundle();
@@ -87,7 +89,7 @@ public class InvoiceFragment extends BaseFragment implements
 
     @Override
     public void onInvoiceClick(Invoice invoice) {
-
+        scrollPosition = rvInvoiceData.getLayoutManager().onSaveInstanceState();
         Intent intent = null;
 
         switch (searchViewModel.getDataType()) {
@@ -148,6 +150,9 @@ public class InvoiceFragment extends BaseFragment implements
                     showErrorDialog(getString(R.string.search_error2));
                 } else {
                     adapter.addData((List<Invoice>) response.getObject());
+                    if (scrollPosition != null) {
+                        rvInvoiceData.getLayoutManager().onRestoreInstanceState(scrollPosition);
+                    }
                 }
                 break;
         }

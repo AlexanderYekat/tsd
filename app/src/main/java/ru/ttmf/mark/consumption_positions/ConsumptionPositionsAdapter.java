@@ -23,6 +23,7 @@ public class ConsumptionPositionsAdapter extends RecyclerView.Adapter<Consumptio
         this.positionList.addAll(positions);
     }
 
+
     @NonNull
     @Override
     public PositionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

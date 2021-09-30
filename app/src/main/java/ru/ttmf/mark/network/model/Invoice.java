@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Invoice implements Parcelable {
+public class Invoice implements Parcelable, Comparable<Invoice> {
 
 
     @SerializedName("id")
@@ -125,5 +125,10 @@ public class Invoice implements Parcelable {
     }
     public void setSeria(String seria) {
         this.seria = seria;
+    }
+
+    @Override
+    public int compareTo(Invoice o) {
+        return Integer.compare(Integer.parseInt(this.cipher.substring(1)), Integer.parseInt(o.cipher.substring(1)));
     }
 }
