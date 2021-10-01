@@ -107,7 +107,6 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.InvoiceD
         @BindView(R.id.seria)
         TextView seria;
 
-
         public InvoiceData(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
