@@ -129,6 +129,6 @@ public class Invoice implements Parcelable, Comparable<Invoice> {
 
     @Override
     public int compareTo(Invoice o) {
-        return Integer.compare(Integer.parseInt(this.cipher.substring(1)), Integer.parseInt(o.cipher.substring(1)));
+        return Integer.compare(Integer.parseInt(this.cipher.replaceAll("[^0-9]", "")), Integer.parseInt(o.cipher.replaceAll("[^0-9]", "")));
     }
 }
