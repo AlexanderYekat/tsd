@@ -61,6 +61,9 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private AlertDialog.Builder builder;
     private Integer countBarcodes = 0;
 
+    private Integer count;
+    private Integer scan_count;
+
 
     private UUID scanSessionId;
     private DeviceSavePosition deviceSavePosition;
@@ -78,6 +81,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     TextView totalPositionsTextView;
+    TextView totalCountTextView;
 
 
     @Override
@@ -92,6 +96,8 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         String seriaText = getIntent().getExtras().getString(SERIA);
         String id = getIntent().getExtras().getString(ID);
         Ean = getIntent().getExtras().getString(EAN13);
+        count = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
+        scan_count = Math.round(Float.parseFloat(getIntent().getExtras().getString(SCAN_COUNT)));
         //totalPositions = Math.round(Float.parseFloat(getIntent().getExtras().getString(COUNT)));
         reverseDirectPosition = new ArrayList<PositionsSaveModel>();
         if (getIntent().getExtras() != null)
@@ -104,6 +110,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         InitializeReceiver();
         registerReceiver(intentBarcodeDataReceiver, intentFilter);
         totalPositionsTextView = (TextView) findViewById(R.id.totalPositions);
+        totalCountTextView = findViewById(R.id.totalCount);
 
         initScanSession(id);
 
@@ -163,7 +170,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                         List<Position> positionsList = (List<Position>) response.getObject();
                         viewModel.setPositions(positionsList);
                         totalPositions = positionsList.size();
-                        totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
+                        updateScannedPositions();
                         initPositionsRecycler(positionsList);
                         break;
                     case SavePositions:
@@ -276,9 +283,39 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             if (positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SGTIN()) || positionsAdapter.getItems().get(i).getSgTin().equals(matrix.SSCC())) {
                 scannedPositions++;
                 if (matrix.SGTIN() == null) {
+                    int index = -1;
+                    for (Position item : posList) {
+                        if (item.getSgTin().equals(matrix.SSCC())) {
+                            index = posList.indexOf(item);
+                        }
+                    }
+                    String quant = posList.get(index).getQuant();
+                    if (!quant.equals("")) {
+                        if ((scan_count + Integer.parseInt(quant)) > count) {
+                            toast.show();
+                            scannedPositions--;
+                            return;
+                        }
+                        scan_count += Integer.parseInt(quant);
+                    }
                     positionsAdapter.removeItem(matrix.SSCC());
                     reverseDirectPosition.add(new PositionsSaveModel(matrix.SSCC(), "", 1));
                 } else {
+                    int index = -1;
+                    for (Position item : posList) {
+                        if (item.getSgTin().equals(matrix.SGTIN())) {
+                            index = posList.indexOf(item);
+                        }
+                    }
+                    String quant = posList.get(index).getQuant();
+                    if (!quant.equals("")) {
+                        if ((scan_count + Integer.parseInt(quant)) > count) {
+                            toast.show();
+                            scannedPositions--;
+                            return;
+                        }
+                        scan_count += Integer.parseInt(quant);
+                    }
                     positionsAdapter.removeItem(matrix.SGTIN());
                     reverseDirectPosition.add(new PositionsSaveModel(matrix.SGTIN(), code, 1));
                 }
@@ -479,7 +516,13 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     }
 
     private void updateScannedPositions() {
-        totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
+        if (TTN_TYPE.equals("1")) {
+            totalPositionsTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
+        }
+        else {
+            totalCountTextView.setText("(" + scannedPositions + "/" + totalPositions + ")");
+            totalPositionsTextView.setText("(" + scan_count + "/" + count + " уп)");
+        }
     }
 
     private List<String> getPositions(List<Position> positions) {
@@ -543,6 +586,19 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     }
 
     private void showSaveDialog(String message) {
+        if (!TTN_TYPE.equals("1")) {
+            if (scan_count > count) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Одна или несколько транспортных упаковок не принадлежат данной позиции!");
+                builder.setTitle(R.string.error);
+                builder.setPositiveButton(R.string.ok, (dialog, which) -> {
+                    dialog.dismiss();
+                    finish();
+                });
+                builder.show();
+                return;
+            }
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(message);
         builder.setPositiveButton(R.string.yes, (dialog, which) -> {
@@ -606,7 +662,6 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             dialog.dismiss();
         });
         builder.show();
-
     }
 
     protected void showErrorBarcodeInfo(String text) {

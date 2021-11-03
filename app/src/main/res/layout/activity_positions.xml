@@ -32,7 +32,7 @@
             android:id="@+id/linlayoutv"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".60"
+            android:layout_weight=".40"
             android:orientation="vertical">
 
             <TextView
@@ -49,7 +49,7 @@
             <TextView
                 android:id="@+id/seria"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 android:padding="2dp"
                 android:textColor="@android:color/black"
@@ -58,15 +58,34 @@
                 tools:text="seria" />
         </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linlayoutv2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".60"
+        android:orientation="vertical">
         <TextView
             android:id="@+id/totalPositions"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="0.40"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textSize="14sp"
+            android:padding="2dp"
+            android:textStyle="bold"
+            tools:text="(100000/100000 уп)"/>
+
+        <TextView
+            android:id="@+id/totalCount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:padding="2dp"
+            android:textStyle="bold"
+            tools:text="(10/10)"/>
+    </LinearLayout>
 
     </LinearLayout>
 

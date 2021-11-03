@@ -10,6 +10,14 @@ public class Position implements Serializable {
     @Expose
     private String sgTin;
 
+    @SerializedName("quant")
+    private String quant;
+
+    public String getQuant() {
+        if (quant != null) return quant;
+        return "";
+    }
+
     public Position(String tin){
         this.sgTin = tin;
     }

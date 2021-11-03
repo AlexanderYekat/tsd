@@ -206,6 +206,11 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
                         break;
                     case SUCCESS:
                         OwnerIDResponse data = (OwnerIDResponse) response.getObject();
+                        if (data.data == null) {
+                            //showErrorDialog("Аутентификация завершена не полностью");
+                            next();
+                            break;
+                        }
                         PreferenceController.getInstance().setOwnerId(data.data.ownerId);
                         next();
                         break;

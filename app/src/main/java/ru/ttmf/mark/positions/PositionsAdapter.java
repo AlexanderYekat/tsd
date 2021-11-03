@@ -36,6 +36,9 @@ public class PositionsAdapter extends RecyclerView.Adapter<PositionsAdapter.Posi
     public void onBindViewHolder(@NonNull PositionViewHolder holder, int position) {
         holder.itemView.setTag(position);
         holder.number.setText(positionList.get(position).getSgTin());
+        if (!positionList.get(position).getQuant().equals("")) {
+            holder.quant.setText("(" + positionList.get(position).getQuant() + " уп)");
+        }
     }
 
     public void removeItem(String code) {
@@ -70,6 +73,9 @@ public class PositionsAdapter extends RecyclerView.Adapter<PositionsAdapter.Posi
     public class PositionViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.number)
         TextView number;
+
+        @BindView(R.id.quant)
+        TextView quant;
 
         public PositionViewHolder(View itemView) {
             super(itemView);
