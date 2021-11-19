@@ -1,5 +1,5 @@
 <resources>
-    <string name="menu">Меню (версия 1.46)</string>
+    <string name="menu">Меню (версия 1.47)</string>
     <!--Для увеличения версии: обновить строку выше + обновить в gradle + обновить [cur_version] в PreferenceController-->
 
     <!-->

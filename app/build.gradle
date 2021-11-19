@@ -18,13 +18,13 @@ android {
         }
     }
 
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "ru.ttmf.mark"
         minSdkVersion 19
-        targetSdkVersion 29
-        versionCode 46
-        versionName '1.46'
+        targetSdkVersion 30
+        versionCode 47
+        versionName '1.47'
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
