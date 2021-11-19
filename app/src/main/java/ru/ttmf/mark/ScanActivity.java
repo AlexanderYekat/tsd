@@ -82,21 +82,29 @@ public abstract class ScanActivity extends AppCompatActivity {
             });
             break;
              */
+            case "EDA50K":
+                receiver = new HONEYWELL_EDA50K_Receiver(new OnDecodeCompleteListener() {
+                    @Override
+                    public void onDecodeCompleted(int type, int length, String barcode) {
+                        onDecodeComplete(type, length, barcode);
+                    }
+                });
+                break;
             case "LPT82":
                 receiver = new LPT_82_Receiver(new OnDecodeCompleteListener() {
-                @Override
-                public void onDecodeCompleted(int type, int length, String barcode) {
-                    onDecodeComplete(type, length, barcode);
-                }
-            });
-            break;
+                    @Override
+                    public void onDecodeCompleted(int type, int length, String barcode) {
+                        onDecodeComplete(type, length, barcode);
+                    }
+                });
+                break;
             default:
                 receiver = new LPT_82_Receiver(new OnDecodeCompleteListener() {
-                @Override
-                public void onDecodeCompleted(int type, int length, String barcode) {
-                    onDecodeComplete(type, length, barcode);
-                }
-            });
+                    @Override
+                    public void onDecodeCompleted(int type, int length, String barcode) {
+                        onDecodeComplete(type, length, barcode);
+                    }
+                });
         }
         intentBarcodeDataReceiver = receiver.getReceiver();
         intentFilter = receiver.getFilter();
