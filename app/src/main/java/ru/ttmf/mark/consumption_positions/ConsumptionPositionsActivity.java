@@ -85,7 +85,6 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +148,12 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         switch (response.getStatus()) {
             case ERROR:
                 hideProgressDialog();
-                showErrorDialog(response.getError());
+                String errorText = response.getError().trim();
+                if (errorText == null || errorText.length() == 0) {
+                    errorText = "Сервер не доступен, обратитесь в тех. поддержку";
+                }
+                //showErrorDialog(response.getError());
+                showErrorDialog(errorText);
                 break;
             case LOADING:
                 showProgressDialog();
@@ -283,7 +287,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
     private void playSound(int resId) {
         MediaPlayer mp = MediaPlayer.create(this, resId);
-        mp.setVolume(1, 1);
+        mp.setVolume(1.0f, 1.0f);
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override

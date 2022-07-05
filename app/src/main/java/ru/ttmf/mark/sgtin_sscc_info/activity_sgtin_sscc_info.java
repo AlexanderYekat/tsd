@@ -124,7 +124,12 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
         switch (response.getStatus()) {
             case ERROR:
                 hideProgressDialog();
-                showErrorDialog(response.getError());
+                String errorText = response.getError().trim();
+                if (errorText == null || errorText.length() == 0) {
+                    errorText = "Сервер не доступен, обратитесь в тех. поддержку";
+                }
+                //showErrorDialog(response.getError());
+                showErrorDialog(errorText);
                 break;
             case LOADING:
                 showProgressDialog();

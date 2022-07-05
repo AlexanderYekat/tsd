@@ -294,7 +294,12 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
                     showErrorDialog("Используйте протокол безопасности TLS 1.2!");  // Ошибка при неправильном ownerId
                     break;
                 }
-                showErrorDialog(response.getError());
+                String errorText = response.getError().trim();
+                if (errorText == null || errorText.length() == 0) {
+                    errorText = "Сервер не доступен, обратитесь в тех. поддержку";
+                }
+                //showErrorDialog(response.getError());
+                showErrorDialog(errorText);
                 break;
         }
     }

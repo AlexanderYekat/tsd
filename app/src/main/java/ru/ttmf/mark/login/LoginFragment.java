@@ -173,7 +173,12 @@ public class LoginFragment extends BaseFragment implements Observer<Response> {
                 if (response.getType().equals(QueryType.Login)) {
                     switch (response.getStatus()) {
                         case ERROR:
-                            showErrorDialog(response.getError());
+                            String errorText = response.getError().trim();
+                            if (errorText == null || errorText.length() == 0) {
+                                errorText = "Сервер не доступен, обратитесь в тех. поддержку";
+                            }
+                            //showErrorDialog(response.getError());
+                            showErrorDialog(errorText);
                             hideProgressDialog();
                             break;
                         case SUCCESS:

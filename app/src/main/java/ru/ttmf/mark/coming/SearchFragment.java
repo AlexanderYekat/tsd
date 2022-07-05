@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.common.StringUtils;
+
 import ru.ttmf.mark.R;
 import ru.ttmf.mark.common.BaseFragment;
 import ru.ttmf.mark.common.DataType;
@@ -122,7 +124,11 @@ public class SearchFragment extends BaseFragment implements Observer<Response> {
         switch (response.getStatus()) {
             case ERROR:
                 hideProgressDialog();
-                showErrorDialog(response.getError());
+                String errorText = response.getError().trim();
+                if (errorText == null || errorText.length() == 0) {
+                    errorText = "Сервер не доступен, обратитесь в тех. поддержку";
+                }
+                showErrorDialog(errorText);
                 break;
             case LOADING:
                 showProgressDialog();

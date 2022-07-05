@@ -158,7 +158,12 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         switch (response.getStatus()) {
             case ERROR:
                 hideProgressDialog();
-                showErrorDialog(response.getError());
+                String errorText = response.getError().trim();
+                if (errorText == null || errorText.length() == 0) {
+                    errorText = "Сервер не доступен, обратитесь в тех. поддержку";
+                }
+                //showErrorDialog(response.getError());
+                showErrorDialog(errorText);
                 break;
             case LOADING:
                 showProgressDialog();

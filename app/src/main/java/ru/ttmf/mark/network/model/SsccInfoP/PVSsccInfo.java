@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class PVSsccInfo {
 
-    @SerializedName("pvId")
-    private Long pvId;
+        @SerializedName("pvId")
+        private Long pvId;
 
-    @SerializedName("pvDate")
-    private String pvDate;
+        @SerializedName("pvDate")
+        private String pvDate;
 
-    @SerializedName("sName")
+        @SerializedName("sName")
     private String sName;
 
     @SerializedName("pvNom")
