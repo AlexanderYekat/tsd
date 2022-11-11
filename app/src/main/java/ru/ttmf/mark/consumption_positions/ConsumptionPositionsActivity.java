@@ -225,7 +225,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         DataMatrix matrix = new DataMatrix();
         try {
             //преобразование штрихкода в SGTIN или SCCC
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
 
             //////////////BASE 64 QRCODE//////////////////////
             //byte[] codeBytes = code.getBytes(Charset.forName("UTF-8"));

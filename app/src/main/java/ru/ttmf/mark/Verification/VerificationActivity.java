@@ -56,7 +56,7 @@ public class VerificationActivity extends ScanActivity {
     private void successfulScan(String code) {
         DataMatrix matrix = new DataMatrix();
         try {
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
             if (matrix.SSCC() != null) {
                 showAlertDialog(R.layout.scan_success_alert_dialog, "Проверка SSCC пройдена успешно");
             }

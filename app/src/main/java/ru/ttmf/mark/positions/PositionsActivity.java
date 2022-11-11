@@ -254,7 +254,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
     private void successfulScan(String code) {
         DataMatrix matrix = new DataMatrix();
         try {
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
 
             if (TTN_TYPE.equals("1")) {
                 ReverseScan(positionsAdapter.getItems(), matrix, code);

@@ -37,16 +37,23 @@ public class DataMatrixHelpers {
         }
         return code;
     }
-    public static void splitStr(DataMatrix dataMatrix, String data, int delimiter) {
+    public static void splitStr(DataMatrix dataMatrix, String data, int delimiter, boolean firstLoop) {
 
         if (data.length() > 2) {
 
             boolean k240 = false;
 
+            if (firstLoop) {
+                int firstChar = (int) data.charAt(0);
+                if (firstChar != 48) {
+                    data = data.substring(1);
+                }
+            }
+
             if ((int) data.charAt(0) == delimiter) {
 
                 data = data.substring(1);
-                splitStr(dataMatrix, data, delimiter);
+                splitStr(dataMatrix, data, delimiter, false);
 
             } else {
 
@@ -100,7 +107,7 @@ public class DataMatrixHelpers {
                         if (data.length() > 0)
                             data = data.substring(1);
 
-                    splitStr(dataMatrix, data, delimiter);
+                    splitStr(dataMatrix, data, delimiter, false);
 
                 } else {
 
@@ -108,7 +115,7 @@ public class DataMatrixHelpers {
                         if (data.length() > 0)
                             data = data.substring(1);
 
-                    splitStr(dataMatrix, data, delimiter);
+                    splitStr(dataMatrix, data, delimiter, false);
                 }
             }
         }

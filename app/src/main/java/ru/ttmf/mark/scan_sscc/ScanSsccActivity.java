@@ -97,7 +97,7 @@ public class ScanSsccActivity extends ScanActivity {
         {
         DataMatrix matrix = new DataMatrix();
         try {
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
             Toast toast;
             if (matrix.SGTIN() != null) {
                 toast = Toast.makeText(getApplicationContext(), "Только SSCC коды!", Toast.LENGTH_LONG);

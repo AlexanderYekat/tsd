@@ -153,7 +153,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
     {
         DataMatrix matrix = new DataMatrix();
         try {
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
             Toast toast;
 
             boolean find = false;

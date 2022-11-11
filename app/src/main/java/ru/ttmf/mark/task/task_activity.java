@@ -86,7 +86,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
     {
         DataMatrix matrix = new DataMatrix();
         try {
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
             Toast toast;
 
             if (matrix.SSCC() != null) {

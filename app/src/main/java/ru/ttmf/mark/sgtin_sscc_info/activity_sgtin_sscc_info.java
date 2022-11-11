@@ -87,7 +87,7 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
         //textView2.setText("");
         DataMatrix matrix = new DataMatrix();
         try {
-            DataMatrixHelpers.splitStr(matrix, code, 29);
+            DataMatrixHelpers.splitStr(matrix, code, 29, true);
             if (matrix.SGTIN() != null) {
                 //sgtin
                 viewModel.getTTNSgtinInfo(PreferenceController.getInstance().getToken(), matrix.SGTIN()).observe(this, this);
