@@ -1,6 +1,7 @@
 package ru.ttmf.mark;
 
 import android.support.multidex.MultiDexApplication;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -27,9 +28,26 @@ public class App extends MultiDexApplication {
             sslContext = SSLContext.getInstance("TLSv1.2");
             sslContext.init(null, null, null);
             sslContext.createSSLEngine();
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException
-                | NoSuchAlgorithmException | KeyManagementException e) {
+        } catch (GooglePlayServicesRepairableException e) {
+
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "GooglePlayServicesRepairableException", Toast.LENGTH_LONG).show();
+
+        } catch (GooglePlayServicesNotAvailableException e) {
+
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "GooglePlayServicesNotAvailableException", Toast.LENGTH_LONG).show();
+
+        } catch (NoSuchAlgorithmException e) {
+
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "NoSuchAlgorithmException", Toast.LENGTH_LONG).show();
+
+        } catch (KeyManagementException e) {
+
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "KeyManagementException", Toast.LENGTH_LONG).show();
+
         }
     }
 }
