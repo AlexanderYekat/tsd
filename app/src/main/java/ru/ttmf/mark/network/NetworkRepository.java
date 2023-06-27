@@ -7,6 +7,10 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
+
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
 import okhttp3.Route;
@@ -38,6 +42,8 @@ import ru.ttmf.mark.network.model.SearchResponse;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -344,12 +350,12 @@ public class NetworkRepository {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 liveData.postValue(new Response(
                         QueryType.Login,
-                        NetworkStatus.ERROR, "INTERNET ERROR"));
-                        /*"Ошибка: " + t.getMessage() + "\n" +
+                        NetworkStatus.ERROR, //"INTERNET ERROR"));
+                        "Ошибка: " + t.getMessage() + "\n" +
                                 "URL: " + call.request().url() + "\n" +
                                 "METHOD: " + call.request().method() + "\n" +
                                 "BODY: " + call.request().toString() + "\n"));/* +
-                                "PROXY: " + client.proxy().address()));*/
+                                "PROXY: " + client.proxy().address())); */
             }
         });
         return liveData;

@@ -237,9 +237,19 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         deviceSavePosition.setScanDate(formatter.format(date));
     }
 
+    private void ToastMessage(String message, Integer soundId) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+
+        playSound(soundId);
+
+        return;
+    }
+
     private void playSound(int resId) {
         MediaPlayer mp = MediaPlayer.create(this, resId);
-        mp.setVolume(1, 1);
+        mp.setVolume(1.0f, 1.0f);
 
         mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -267,20 +277,13 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             //сохранение отсканированных позиций на устройстве (перезапись json)
             localSaveScanPositions(reverseDirectPosition, false);
         } catch (Exception ex) {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Некорректный штрихкод!", Toast.LENGTH_SHORT);
-            toast.show();
-
-            playSound(R.raw.s3);
-
+            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
             return;
         }
     }
 
 
     private void DirectScan(List<Position> posList, DataMatrix matrix, String code) {
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "Неверный штрихкод!", Toast.LENGTH_SHORT);
 
         int start_count = scannedPositions;
 
@@ -297,7 +300,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                     String quant = posList.get(index).getQuant();
                     if (!quant.equals("")) {
                         if ((scan_count + Integer.parseInt(quant)) > count) {
-                            toast.show();
+                            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
                             scannedPositions--;
                             return;
                         }
@@ -315,7 +318,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
                     String quant = posList.get(index).getQuant();
                     if (!quant.equals("")) {
                         if ((scan_count + Integer.parseInt(quant)) > count) {
-                            toast.show();
+                            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
                             scannedPositions--;
                             return;
                         }
@@ -331,8 +334,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         }
 
         if (start_count == scannedPositions) {
-            toast.show();
-            playSound(R.raw.s3);
+            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
             //GetSgtinSsccInfo(matrix);
         }
 
@@ -490,10 +492,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
         for (Position s : posList) {
             if (s.getSgTin().equals(matrix.SGTIN()) || s.getSgTin().equals(matrix.SSCC())) {
                 check = false;
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Штрих-код уже был просканирован!", Toast.LENGTH_SHORT);
-                toast.show();
-                playSound(R.raw.s3);
+                ToastMessage("Штрих-код уже был просканирован!", R.raw.scanned_barcode);
                 break;
             } else {
                 check = true;
@@ -507,10 +506,7 @@ public class PositionsActivity extends ScanActivity implements Observer<Response
             if (!Ean.trim().isEmpty() && Ean.length() == 13 && isNumeric(Ean) && Ean.equals(matrix.EAN())) {
                 return false;
             } else {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "EAN-13 не совпадает!", Toast.LENGTH_LONG);
-                toast.show();
-                playSound(R.raw.s3);
+                ToastMessage("EAN-13 не совпадает!", R.raw.bad_ean13);
                 AtomicReference<Boolean> rez;
                 rez = errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN(), matrix.EAN());
 

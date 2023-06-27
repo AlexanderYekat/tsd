@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -82,6 +83,30 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
         successfulScan(barcode);
     }
 
+    private void ToastMessage(String message, Integer soundId) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+
+        playSound(soundId);
+
+        return;
+    }
+
+    private void playSound(int resId) {
+        MediaPlayer mp = MediaPlayer.create(this, resId);
+        mp.setVolume(1.0f, 1.0f);
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        });
+        mp.start();
+    }
+
     private void successfulScan(String code)
     {
         //textView2.setText("");
@@ -101,8 +126,7 @@ public class activity_sgtin_sscc_info extends ScanActivity implements Observer<R
                 viewModel.getPVSsccInfo(PreferenceController.getInstance().getToken(), matrix.SSCC()).observe(this, this);
             }
         } catch (Exception ex) {
-            Toast toast = Toast.makeText(getApplicationContext(),"Произошла ошибка!", Toast.LENGTH_SHORT);
-            toast.show();
+            ToastMessage("Произошла ошибка!", R.raw.is_error);
             return;
         }
     }

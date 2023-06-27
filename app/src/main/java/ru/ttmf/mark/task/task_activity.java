@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
@@ -82,6 +83,30 @@ public class task_activity extends ScanActivity implements Observer<Response> {
         successfulScan(barcode);
     }
 
+    private void ToastMessage(String message, Integer soundId) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+
+        playSound(soundId);
+
+        return;
+    }
+
+    private void playSound(int resId) {
+        MediaPlayer mp = MediaPlayer.create(this, resId);
+        mp.setVolume(1.0f, 1.0f);
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        });
+        mp.start();
+    }
+
     private void successfulScan(String code)
     {
         DataMatrix matrix = new DataMatrix();
@@ -96,8 +121,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
                     if (var.equals(matrix.getSSCC())) // Проверка, был ли код отсканирован ранее
                     {
                         find = true;
-                        toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG); // Если код ранее был корректно отсканирован, запрос не отправляется
-                        toast.show();
+                        ToastMessage("Штрихкод уже был отсканирован!", R.raw.scanned_barcode);
                         break;
                     }
                 }
@@ -112,8 +136,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
                     if (var.equals(matrix.getSGTIN())) // Проверка, был ли код отсканирован ранее
                     {
                         find = true;
-                        toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG); // Если код ранее был корректно отсканирован, запрос не отправляется
-                        toast.show();
+                        ToastMessage("Штрихкод уже был отсканирован!", R.raw.scanned_barcode);
                         break;
                     }
                 }
@@ -123,8 +146,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
                 }
             }
         } catch (Exception ex) {
-            Toast toast = Toast.makeText(getApplicationContext(),"Некорректный штрихкод!", Toast.LENGTH_LONG);
-            toast.show();
+            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
             return;
         }
     }
@@ -202,8 +224,7 @@ public class task_activity extends ScanActivity implements Observer<Response> {
     {
         if (SGTIN_list.isEmpty() && SSCC_list.isEmpty())
         {
-            Toast toast = Toast.makeText(getApplicationContext(),"Нет отсканированных кодов!", Toast.LENGTH_LONG);
-            toast.show();
+            ToastMessage("Нет отсканированных кодов!", R.raw.no_scanned_codes);
             return;
         }
             viewModel.SaveTaskTransformation(new TaskRequest(OperationType.SaveTsdEntity.toString(),

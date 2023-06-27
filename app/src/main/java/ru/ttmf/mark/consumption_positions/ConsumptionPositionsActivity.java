@@ -220,6 +220,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         //rvPositions.scroll
     }
 
+
     private void successfulScan(String code) {
 
         DataMatrix matrix = new DataMatrix();
@@ -247,15 +248,15 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
                 if (find == true) {
                     Scan(positionsAdapter.getItems(), matrix, code);
                 } else {
-                    ToastMessage("Штрихкод из другой партии!");
+                    ToastMessage("Штрихкод из другой партии!", R.raw.another_part_barcode);
                     //GetSgtinSsccInfo(matrix);
                 }
 
             } else {
-                ToastMessage("Некорректный штрихкод!");
+                ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
             }
         } catch (Exception ex) {
-            ToastMessage("Некорректный штрихкод!");
+            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
         }
 
     }
@@ -275,12 +276,12 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         writeToFile("Расход (pvsId: " + deviceSavePosition.getPvsId() + ") " + deviceSavePosition.getScanDate() + ".txt", ToJson(deviceSavePosition));
     }
 
-    private void ToastMessage(String message) {
+    private void ToastMessage(String message, Integer soundId) {
         Toast toast = Toast.makeText(getApplicationContext(),
                 message, Toast.LENGTH_SHORT);
         toast.show();
 
-        playSound(R.raw.s3);
+        playSound(soundId);
 
         return;
     }
@@ -350,6 +351,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
 
             localSaveScanPositions(posList, false);
         } else {
+            ToastMessage("Превышено количество кодов маркировки!", R.raw.bad_barcode_count);
+
             return;
         }
     }
@@ -360,11 +363,8 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
         for (String s : posList) {
             if (s.equals(matrix.SGTIN()) || s.equals(matrix.SSCC())) {
                 check = false;
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Штрих-код уже был просканирован!", Toast.LENGTH_SHORT);
-                toast.show();
 
-                playSound(R.raw.s3);
+                ToastMessage("Штрих-код уже был просканирован!", R.raw.scanned_barcode);
 
                 break;
             } else {
@@ -379,12 +379,7 @@ public class ConsumptionPositionsActivity extends ScanActivity implements Observ
             if (Ean.equals(matrix.EAN())) {
                 return;
             } else {
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "EAN-13 не совпадает!", Toast.LENGTH_LONG);
-                toast.show();
-
-                playSound(R.raw.s3);
-
+                ToastMessage("EAN-13 не совпадает!", R.raw.bad_ean13);
                 errorSgtinEanDialog("Удалить просканированную позицию?", matrix.SGTIN(), matrix.EAN());
             }
         } else {

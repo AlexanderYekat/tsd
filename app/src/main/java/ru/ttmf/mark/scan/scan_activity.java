@@ -3,6 +3,7 @@ package ru.ttmf.mark.scan;
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -149,6 +150,30 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
         successfulScan(barcode);
     }
 
+    private void ToastMessage(String message, Integer soundId) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+
+        playSound(soundId);
+
+        return;
+    }
+
+    private void playSound(int resId) {
+        MediaPlayer mp = MediaPlayer.create(this, resId);
+        mp.setVolume(1.0f, 1.0f);
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        });
+        mp.start();
+    }
+
     private void successfulScan(String code)
     {
         DataMatrix matrix = new DataMatrix();
@@ -167,8 +192,7 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
                             break;
                         }
                         find = true;
-                        toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG); // Если код ранее был корректно отсканирован, запрос не отправляется
-                        toast.show();
+                        ToastMessage("Штрихкод уже был отсканирован!", R.raw.scanned_barcode);
                         break;
                     }
                 }
@@ -220,14 +244,12 @@ public class scan_activity extends ScanActivity implements Observer<Response> {
                 }
                 else {
                     progressBar.setVisibility(ProgressBar.GONE);
-                    Toast toast2 = Toast.makeText(getApplicationContext(),"Некорректный штрихкод!", Toast.LENGTH_SHORT);
-                    toast2.show();
+                    ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
                     return;
                 }
             }
         } catch (Exception ex) {
-            Toast toast = Toast.makeText(getApplicationContext(),"Некорректный штрихкод!", Toast.LENGTH_SHORT);
-            toast.show();
+            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
             return;
         }
     }

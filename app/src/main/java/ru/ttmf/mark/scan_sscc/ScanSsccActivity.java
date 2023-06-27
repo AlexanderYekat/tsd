@@ -2,6 +2,7 @@ package ru.ttmf.mark.scan_sscc;
 
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -93,6 +94,30 @@ public class ScanSsccActivity extends ScanActivity {
         successfulScan(barcode);
     }
 
+    private void ToastMessage(String message, Integer soundId) {
+        Toast toast = Toast.makeText(getApplicationContext(),
+                message, Toast.LENGTH_SHORT);
+        toast.show();
+
+        playSound(soundId);
+
+        return;
+    }
+
+    private void playSound(int resId) {
+        MediaPlayer mp = MediaPlayer.create(this, resId);
+        mp.setVolume(1.0f, 1.0f);
+
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        });
+        mp.start();
+    }
+
     private void successfulScan(String code)
         {
         DataMatrix matrix = new DataMatrix();
@@ -100,8 +125,7 @@ public class ScanSsccActivity extends ScanActivity {
             DataMatrixHelpers.splitStr(matrix, code, 29, true);
             Toast toast;
             if (matrix.SGTIN() != null) {
-                toast = Toast.makeText(getApplicationContext(), "Только SSCC коды!", Toast.LENGTH_LONG);
-                toast.show();
+                ToastMessage("Только SSCC коды!", R.raw.only_sscc);
             } else {
 
                 MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
@@ -116,8 +140,7 @@ public class ScanSsccActivity extends ScanActivity {
                         if (var.sscc.equals(matrix.SSCC()))
                         {
                             find = true;
-                            toast = Toast.makeText(getApplicationContext(), "Штрихкод уже был отсканирован!", Toast.LENGTH_LONG);
-                            toast.show();
+                            ToastMessage("Штрихкод уже был отсканирован!", R.raw.scanned_barcode);
                             break;
                         }
                     }
@@ -139,8 +162,7 @@ public class ScanSsccActivity extends ScanActivity {
             }
 
         } catch (Exception ex) {
-            Toast toast = Toast.makeText(getApplicationContext(),"Некорректный штрихкод!", Toast.LENGTH_SHORT);
-            toast.show();
+            ToastMessage("Некорректный штрихкод!", R.raw.not_correct_barcode);
             return;
         }
     }
